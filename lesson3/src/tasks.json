@@ -1,0 +1,94 @@
+[
+  {
+    "id": 1,
+    "title": "Create wireframes",
+    "description": "Design basic website structure and layout wireframes",
+    "createdAt": "2024-10-01T09:00:00Z",
+    "completedAt": "2024-10-02T09:00:00Z",
+    "status": "done",
+    "priority": "high",
+    "deadline": "2024-10-05T18:00:00Z"
+  },
+  {
+    "id": 2,
+    "title": "Design homepage",
+    "description": "Create visual design for the main landing page",
+    "createdAt": "2024-10-02T10:30:00Z",
+    "status": "inProgress",
+    "priority": "high",
+    "deadline": "2024-10-15T17:00:00Z"
+  },
+  {
+    "id": 3,
+    "title": "Choose color palette",
+    "description": "Select brand colors and create color scheme for the website",
+    "createdAt": "2024-10-03T14:15:00Z",
+    "status": "todo",
+    "priority": "medium",
+    "deadline": "2024-10-20T12:00:00Z"
+  },
+  {
+    "id": 4,
+    "title": "Create logo variants",
+    "description": "Design main logo and different size variations",
+    "createdAt": "2024-10-04T08:45:00Z",
+    "status": "todo",
+    "priority": "low",
+    "deadline": "2024-10-25T16:30:00Z"
+  },
+  {
+    "id": 5,
+    "title": "Design navigation",
+    "description": "Create navigation menu design and user flow",
+    "createdAt": "2024-10-05T11:20:00Z",
+    "status": "todo",
+    "priority": "medium",
+    "deadline": "2024-10-18T15:00:00Z"
+  },
+  {
+    "id": 6,
+    "title": "Mobile responsive",
+    "description": "Adapt designs for mobile and tablet devices",
+    "createdAt": "2024-10-06T13:10:00Z",
+    "status": "inProgress",
+    "priority": "high",
+    "deadline": "2024-10-12T19:00:00Z"
+  },
+  {
+    "id": 7,
+    "title": "Icon set design",
+    "description": "Create custom icon set for website elements",
+    "createdAt": "2024-10-07T16:30:00Z",
+    "status": "todo",
+    "priority": "medium",
+    "deadline": "2024-10-22T14:00:00Z"
+  },
+  {
+    "id": 8,
+    "title": "Typography setup",
+    "description": "Select fonts and create typography hierarchy",
+    "createdAt": "2024-10-08T09:45:00Z",
+    "completedAt": "2024-10-09T14:20:00Z",
+    "status": "done",
+    "priority": "low",
+    "deadline": "2024-10-10T17:30:00Z"
+  },
+  {
+    "id": 9,
+    "title": "Design system",
+    "description": "Create comprehensive design system and style guide",
+    "createdAt": "2024-10-09T12:00:00Z",
+    "status": "inProgress",
+    "priority": "high",
+    "deadline": "2024-10-14T16:00:00Z"
+  },
+  {
+    "id": 10,
+    "title": "Prototype testing",
+    "description": "Create interactive prototype and conduct user testing",
+    "createdAt": "2024-10-10T15:30:00Z",
+    "status": "todo",
+    "priority": "high",
+    "deadline": "2024-10-30T20:00:00Z"
+  }
+]

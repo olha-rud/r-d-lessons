@@ -1,0 +1,20 @@
+{
+  "name": "lesson2",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+   "dev": "ts-node-dev --respawn src/index.ts",
+   "dev2": "ts-node-dev --respawn src/index2.ts",
+   "build": "tsc",
+   "start": "node dist/index.js"
+  },
+  "devDependencies": {
+    "@types/node": "^24.6.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.9.3"
+  }
+}
