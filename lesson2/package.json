@@ -8,6 +8,7 @@
   "main": "index.js",
   "scripts": {
    "dev": "ts-node-dev --respawn src/index.ts",
+   "dev2": "ts-node-dev --respawn src/index2.ts",
    "build": "tsc",
    "start": "node dist/index.js"
   },
