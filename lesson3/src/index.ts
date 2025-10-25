@@ -2,6 +2,7 @@ import {z} from 'zod';
 
 import tasks from './tasks.json';
 import type {Status, Priority} from './dto/Task';
+import {statuses, priorities} from './dto/Task';
 import {DEFAULT_STATUS, DEFAULT_PRIORITY} from './constants';
 
 
@@ -11,8 +12,8 @@ const taskSchema = z.object({
   description: z.string().optional(),
   createdAt: z.string(),
   completedAt: z.string().optional(), 
-  status: z.enum(["todo", "inProgress", "done"]).optional().default(DEFAULT_STATUS),
-  priority: z.enum(["low", "medium", "high"]).optional().default(DEFAULT_PRIORITY),
+  status: z.enum(statuses).default(DEFAULT_STATUS),
+  priority: z.enum(priorities).default(DEFAULT_PRIORITY),
   deadline: z.string().optional(),
 });
 
@@ -44,8 +45,8 @@ function createNewTask (settings: CreateTaskSettings) : Task{
     const newTask: Task = {
     id: newId,
     createdAt: createdAt,
-    status: DEFAULT_STATUS,
-    priority: DEFAULT_PRIORITY,
+    status: settings.status ?? DEFAULT_STATUS,
+    priority: settings.priority ?? DEFAULT_PRIORITY,
     ...settings 
   };
 
@@ -71,12 +72,12 @@ function updateTaskDetails(
     return undefined;
   }
   
-  const task = parsedTasks[taskIndex];
+  const task = parsedTasks[taskIndex]!;
   
   const updatedTask: Task = {
     ...task,
     ...updates
-  } as Task;
+  } 
   
   parsedTasks[taskIndex] = updatedTask;
   
