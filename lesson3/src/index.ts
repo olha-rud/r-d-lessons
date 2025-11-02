@@ -72,7 +72,7 @@ function updateTaskDetails(
     return undefined;
   }
   
-  const task = parsedTasks[taskIndex]!;
+  const task = parsedTasks[taskIndex];
   
   const updatedTask: Task = {
     ...task,
