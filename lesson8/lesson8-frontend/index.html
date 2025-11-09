@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Task Board</title>
+  </head>
+  <body>
+    <div class="app">
+      <!-- Header -->
+      <header class="header">
+        <div class="header-content">
+          <h1>Task Board</h1>
+          <button class="btn-create" id="open-modal">+ Create task</button>
+        </div>
+      </header>
+
+      <!-- Board -->
+      <main class="board">
+        <div class="column">
+          <div class="column-header column-header-todo">
+            <h2>TO DO</h2>
+            <span class="count" id="count-todo">0</span>
+          </div>
+          <div class="column-content" id="column-todo">
+          </div>
+        </div>
+
+        <div class="column">
+          <div class="column-header column-header-inProgress">
+            <h2>IN PROGRESS</h2>
+            <span class="count" id="count-inProgress">0</span>
+          </div>
+          <div class="column-content" id="column-inProgress">
+          </div>
+        </div>
+
+        <div class="column">
+          <div class="column-header column-header-done">
+            <h2>DONE</h2>
+            <span class="count" id="count-done">0</span>
+          </div>
+          <div class="column-content" id="column-done">
+          </div>
+        </div>
+      </main>
+
+      <!-- Modal window for creating task -->
+      <div class="modal" id="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>Create task</h2>
+            <button class="modal-close" id="close-modal">&times;</button>
+          </div>
+
+          <form id="task-form">
+            <div class="form-group">
+              <label for="title">Task name *</label>
+              <input 
+                type="text" 
+                id="title" 
+                name="title" 
+                required 
+                placeholder="What needs to be done?"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="description">Description</label>
+              <textarea 
+                id="description" 
+                name="description" 
+                rows="4"
+                placeholder="Add details..."
+              ></textarea>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="status">Status</label>
+                <select id="status" name="status">
+                  <option value="todo">To Do</option>
+                  <option value="inProgress">In Progress</option>
+                  <option value="done">Done</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="priority">Priority</label>
+                <select id="priority" name="priority">
+                  <option value="low">🟢 Low</option>
+                  <option value="medium" selected>🟡 Medium</option>
+                  <option value="high">🔴 High</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="deadline">Deadline</label>
+              <input type="date" id="deadline" name="deadline" />
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn-secondary" id="cancel-btn">Cancel</button>
+              <button type="submit" class="btn-primary">Create</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
