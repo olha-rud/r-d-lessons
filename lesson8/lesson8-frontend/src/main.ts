@@ -2,114 +2,300 @@ import './style.css';
 import { getTasks, createTask, deleteTask } from './api';
 import type { Task, CreateTaskSettings, Status, Priority } from './task.types';
 
-// Отримуємо елементи
+// ========== DOM ЕЛЕМЕНТИ ==========
+
 const modal = document.getElementById('modal') as HTMLDivElement;
 const openModalBtn = document.getElementById('open-modal') as HTMLButtonElement;
 const closeModalBtn = document.getElementById('close-modal') as HTMLButtonElement;
 const cancelBtn = document.getElementById('cancel-btn') as HTMLButtonElement;
 const taskForm = document.getElementById('task-form') as HTMLFormElement;
+const board = document.getElementById('board') as HTMLDivElement;
 
-// Колонки
 const columnTodo = document.getElementById('column-todo') as HTMLDivElement;
 const columnInProgress = document.getElementById('column-inProgress') as HTMLDivElement;
 const columnDone = document.getElementById('column-done') as HTMLDivElement;
 
-// Лічильники
 const countTodo = document.getElementById('count-todo') as HTMLSpanElement;
 const countInProgress = document.getElementById('count-inProgress') as HTMLSpanElement;
 const countDone = document.getElementById('count-done') as HTMLSpanElement;
 
-// Відкриття/закриття модального вікна
-openModalBtn.addEventListener('click', () => {
-  modal.classList.add('active');
-});
+// ========== КОНСТАНТИ ==========
 
-closeModalBtn.addEventListener('click', () => {
-  modal.classList.remove('active');
-  taskForm.reset();
-});
+// Мапінг пріоритетів на текст
+const PRIORITY_TEXT: Record<Priority, string> = {
+  low: '🟢 Low',
+  medium: '🟡 Medium',
+  high: '🔴 High'
+};
 
-cancelBtn.addEventListener('click', () => {
-  modal.classList.remove('active');
-  taskForm.reset();
-});
+// Мапінг пріоритетів на CSS класи
+const PRIORITY_CLASS: Record<Priority, string> = {
+  low: 'priority-low',
+  medium: 'priority-medium',
+  high: 'priority-high'
+};
 
-// Закриття по кліку поза модальним вікном
-modal.addEventListener('click', (e) => {
-  if (e.target === modal) {
-    modal.classList.remove('active');
-    taskForm.reset();
+// Конфігурація колонок
+const COLUMNS = [
+  { status: 'todo' as Status, element: columnTodo, count: countTodo },
+  { status: 'inProgress' as Status, element: columnInProgress, count: countInProgress },
+  { status: 'done' as Status, element: columnDone, count: countDone }
+];
+
+// ========== ТИПИ ==========
+
+type TaskFormData = {
+  title: string;
+  description: string;
+  status: string;
+  priority: string;
+  deadline: string;
+};
+
+type NotificationType = 'success' | 'error' | 'info' | 'warning';
+
+// ========== TOAST NOTIFICATIONS ==========
+
+// Створюємо контейнер для toast повідомлень
+function createToastContainer(): HTMLDivElement {
+  let container = document.getElementById('toast-container') as HTMLDivElement;
+  
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'toast-container';
+    container.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 10000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 400px;
+    `;
+    document.body.appendChild(container);
   }
-});
+  
+  return container;
+}
 
-// Функція для відображення завдань
-async function renderTasks() {
-  try {
-    const tasks = await getTasks();
-    
-    // Очищаємо колонки
-    columnTodo.innerHTML = '';
-    columnInProgress.innerHTML = '';
-    columnDone.innerHTML = '';
-    
-    // Розподіляємо завдання по колонках
-    const todoTasks = tasks.filter(t => t.status === 'todo');
-    const inProgressTasks = tasks.filter(t => t.status === 'inProgress');
-    const doneTasks = tasks.filter(t => t.status === 'done');
-    
-    // Оновлюємо лічильники
-    countTodo.textContent = todoTasks.length.toString();
-    countInProgress.textContent = inProgressTasks.length.toString();
-    countDone.textContent = doneTasks.length.toString();
-    
-    // Рендеримо картки
-    if (todoTasks.length === 0) {
-      columnTodo.innerHTML = '<div class="empty-column">No tasks</div>';
-    } else {
-      todoTasks.forEach(task => {
-        columnTodo.appendChild(createTaskCard(task));
-      });
+// Показати toast повідомлення
+function showToast(message: string, type: NotificationType = 'info', duration: number = 3000): void {
+  const container = createToastContainer();
+  
+  const toast = document.createElement('div');
+  toast.className = `toast toast-${type}`;
+  
+  // Іконки для різних типів
+  const icons = {
+    success: '✅',
+    error: '❌',
+    info: 'ℹ️',
+    warning: '⚠️'
+  };
+  
+  // Кольори для різних типів
+  const colors = {
+    success: '#74e3a6ff',
+    error: '#ef4444',
+    info: '#3b82f6',
+    warning: '#f59e0b'
+  };
+  
+  toast.style.cssText = `
+    background: white;
+    border-left: 4px solid ${colors[type]};
+    padding: 16px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 300px;
+    animation: slideIn 0.3s ease-out;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 14px;
+    color: #1f2937;
+  `;
+  
+  toast.innerHTML = `
+    <span style="font-size: 20px;">${icons[type]}</span>
+    <span style="flex: 1;">${escapeHtml(message)}</span>
+    <button style="
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: #6b7280;
+      padding: 0;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    ">×</button>
+  `;
+  
+  // Додаємо анімацію
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes slideIn {
+      from {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
     }
-    
-    if (inProgressTasks.length === 0) {
-      columnInProgress.innerHTML = '<div class="empty-column">No tasks</div>';
-    } else {
-      inProgressTasks.forEach(task => {
-        columnInProgress.appendChild(createTaskCard(task));
-      });
+    @keyframes slideOut {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateX(400px);
+        opacity: 0;
+      }
     }
-    
-    if (doneTasks.length === 0) {
-      columnDone.innerHTML = '<div class="empty-column">No tasks</div>';
-    } else {
-      doneTasks.forEach(task => {
-        columnDone.appendChild(createTaskCard(task));
-      });
-    }
-    
-  } catch (error) {
-    console.error('Помилка при завантаженні завдань:', error);
+  `;
+  if (!document.getElementById('toast-styles')) {
+    style.id = 'toast-styles';
+    document.head.appendChild(style);
+  }
+  
+  // Обробник закриття
+  const closeBtn = toast.querySelector('button');
+  const closeToast = () => {
+    toast.style.animation = 'slideOut 0.3s ease-out';
+    setTimeout(() => {
+      toast.remove();
+    }, 300);
+  };
+  
+  closeBtn?.addEventListener('click', closeToast);
+  
+  container.appendChild(toast);
+  
+  // Автоматичне закриття
+  if (duration > 0) {
+    setTimeout(closeToast, duration);
   }
 }
 
-// Функція для створення картки завдання
+// Швидкі функції для різних типів
+function showSuccess(message: string, duration?: number): void {
+  showToast(message, 'success', duration);
+}
+
+function showError(message: string, duration?: number): void {
+  showToast(message, 'error', duration);
+}
+
+function showInfo(message: string, duration?: number): void {
+  showToast(message, 'info', duration);
+}
+
+function showWarning(message: string, duration?: number): void {
+  showToast(message, 'warning', duration);
+}
+
+function getFormData<T extends Record<string, any>>(form: HTMLFormElement): T {
+  const formData = new FormData(form);
+  return Object.fromEntries(formData) as T;
+}
+
+function emptyToUndefined(value: string): string | undefined {
+  return value === '' ? undefined : value;
+}
+
+async function handleAsyncOperation<T>(
+  operation: () => Promise<T>,
+  options: {
+    loadingMessage?: string;
+    successMessage?: string | ((result: T) => string);
+    errorMessage?: string;
+  }
+): Promise<T | null> {
+  try {
+    // Показуємо loading якщо є
+    if (options.loadingMessage) {
+      showInfo(options.loadingMessage, 1000);
+    }
+
+    // Виконуємо операцію
+    const result = await operation();
+
+    // Показуємо success якщо є
+    if (options.successMessage) {
+      const message = typeof options.successMessage === 'function' 
+        ? options.successMessage(result)
+        : options.successMessage;
+      showSuccess(message);
+    }
+
+    return result;
+    
+  } catch (error) {
+    console.error('❌ Помилка операції:', error);
+    
+    // Повідомлення про помилку
+    const errorMsg = error instanceof Error 
+      ? `${options.errorMessage}: ${error.message}`
+      : options.errorMessage || 'An error occurred';
+      
+    showError(errorMsg);
+    return null;
+  }
+}
+
+// ========== ФУНКЦІЇ-ПОМІЧНИКИ ==========
+
+function closeModal(): void {
+  modal.classList.remove('active');
+  taskForm.reset();
+}
+
+function openModal(): void {
+  modal.classList.add('active');
+}
+
+function escapeHtml(text: string): string {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function formatDate(dateString: string): string {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', {
+    day: 'numeric',
+    month: 'short'
+  });
+}
+
+function renderCardsInColumn(tasks: Task[], column: HTMLDivElement): void {
+  column.innerHTML = '';
+  
+  if (tasks.length === 0) {
+    column.innerHTML = '<div class="empty-column">No tasks</div>';
+    return;
+  }
+  
+  tasks.forEach(task => {
+    column.appendChild(createTaskCard(task));
+  });
+}
+
 function createTaskCard(task: Task): HTMLDivElement {
   const card = document.createElement('div');
   card.className = 'task-card';
-  card.dataset.id = task.id.toString();
+  card.dataset.id = task.id;
   card.dataset.priority = task.priority;
   
-  const priorityText = {
-    low: '🟢 Low',
-    medium: '🟡 Medium',
-    high: '🔴 High'
-  }[task.priority];
-  
-  const priorityClass = {
-    low: 'priority-low',
-    medium: 'priority-medium',
-    high: 'priority-high'
-  }[task.priority];
+  const priorityText = PRIORITY_TEXT[task.priority];
+  const priorityClass = PRIORITY_CLASS[task.priority];
   
   card.innerHTML = `
     <div class="task-title">${escapeHtml(task.title)}</div>
@@ -121,90 +307,113 @@ function createTaskCard(task: Task): HTMLDivElement {
     </div>
     
     <div class="task-actions">
-      <button class="btn-delete" data-id="${task.id}">Delete️</button>
+      <button class="btn-delete" data-id="${task.id}">Delete</button>
     </div>
   `;
-  
-  // Додаємо обробник для видалення
-  const deleteBtn = card.querySelector('.btn-delete') as HTMLButtonElement;
-  deleteBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    handleDeleteTask(task.id);
-  });
   
   return card;
 }
 
-// Функція для екранування HTML (захист від XSS)
-function escapeHtml(text: string): string {
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
-}
+// ОСНОВНІ ФУНКЦІЇ
 
-// Функція для форматування дати
-function formatDate(dateString: string): string {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
-    day: 'numeric',
-    month: 'short'
+async function renderTasks(): Promise<void> {
+  const tasks = await handleAsyncOperation(
+    getTasks,
+    {
+      loadingMessage: 'Loading tasks...',
+      errorMessage: 'Failed to load tasks. Please refresh the page.'
+    }
+  );
+
+  if (!tasks) return;
+
+  COLUMNS.forEach(({ status, element, count }) => {
+    const filteredTasks = tasks.filter(t => t.status === status);
+    count.textContent = filteredTasks.length.toString();
+    renderCardsInColumn(filteredTasks, element);
   });
 }
 
-// Обробник створення завдання
-async function handleCreateTask(event: Event) {
+async function handleCreateTask(event: Event): Promise<void> {
   event.preventDefault();
   
-  const formData = new FormData(taskForm);
+  const data = getFormData<TaskFormData>(taskForm);
+  
+  // Валідація
+  if (!data.title.trim()) {
+    showWarning('Please enter a task title');
+    return;
+  }
+  
+  if (data.title.length > 100) {
+    showWarning('Task title is too long (max 100 characters)');
+    return;
+  }
   
   const taskData: CreateTaskSettings = {
-    title: formData.get('title') as string,
-    description: formData.get('description') as string || undefined,
-    status: formData.get('status') as Status,
-    priority: formData.get('priority') as Priority,
-    deadline: formData.get('deadline') as string || undefined,
+    title: data.title,
+    description: emptyToUndefined(data.description),
+    status: data.status as Status,
+    priority: data.priority as Priority,
+    deadline: emptyToUndefined(data.deadline),
   };
 
-  try {
-    console.log('➕ Створюємо завдання...', taskData);
-    await createTask(taskData);
-    console.log('✅ Завдання створено!');
-    
-    // Закриваємо модальне вікно
-    modal.classList.remove('active');
-    
-    // Очищаємо форму
-    taskForm.reset();
-    
-    // Оновлюємо дошку
+  const result = await handleAsyncOperation(
+    () => createTask(taskData),
+    {
+      successMessage: `Task "${taskData.title}" created successfully!`,
+      errorMessage: 'Failed to create task'
+    }
+  );
+
+  if (result) {
+    closeModal();
     await renderTasks();
-    
-  } catch (error) {
-    console.error('❌ Помилка при створенні завдання:', error);
-    alert('Failed to create task. Check the console.');
   }
 }
 
-// Обробник видалення завдання
-async function handleDeleteTask(taskId: number) {
+async function handleDeleteTask(taskId: string): Promise<void> {
   if (!confirm('Are you sure you want to delete this task?')) {
+    showInfo('Deletion cancelled');
     return;
   }
 
-  try {
-    console.log('Delete️ Видаляємо завдання з ID:', taskId);
-    await deleteTask(taskId);
-    console.log('✅ Завдання видалено!');
-    
-    // Оновлюємо дошку
+  const result = await handleAsyncOperation(
+    () => deleteTask(taskId),
+    {
+      successMessage: 'Task deleted successfully!',
+      errorMessage: 'Failed to delete task'
+    }
+  );
+
+  if (result !== null) {
     await renderTasks();
-    
-  } catch (error) {
-    console.error('❌ Помилка при видаленні завдання:', error);
-    alert('Failed to delete task. Check the console.');
   }
 }
 
-// Ініціалізація
+openModalBtn.addEventListener('click', openModal);
+closeModalBtn.addEventListener('click', closeModal);
+cancelBtn.addEventListener('click', closeModal);
+
+modal.addEventListener('click', (e) => {
+  if (e.target === modal) {
+    closeModal();
+  }
+});
+
 taskForm.addEventListener('submit', handleCreateTask);
+
+board.addEventListener('click', (event: MouseEvent) => {
+  const target = event.target as HTMLElement;
+  
+  if (target.matches('.btn-delete')) {
+    event.stopPropagation();
+    const taskId = target.dataset.id;
+    if (taskId) {
+      handleDeleteTask(taskId);
+    }
+  }
+});
+
+//ІНІЦІАЛІЗАЦІЯ
 renderTasks();
