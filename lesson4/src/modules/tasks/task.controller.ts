@@ -1,6 +1,5 @@
 import { TaskService } from './task.service';
-import type { Task, Status, Priority, CreateTaskSettings } from './task.types';
-
+import type { CreateAnyTaskData, TaskFilters, UpdateTaskSettings } from './task.types';
 export class TaskController {
     private taskService: TaskService;
 
@@ -12,11 +11,11 @@ export class TaskController {
         return this.taskService.getTaskDetails(id);
     }
 
-    handleCreateTask(settings: CreateTaskSettings){
-        return this.taskService.createNewTask(settings);
-    }
+   handleCreateTask(data: CreateAnyTaskData) {
+    return this.taskService.createTask(data);
+}
 
-    handleUpdateTask(id: number, updates: Partial<Omit<Task, 'id' | 'createdAt'>>){
+    handleUpdateTask(id: number, updates: UpdateTaskSettings){
         return this.taskService.updateTaskDetails(id, updates);
     }
 
@@ -24,12 +23,7 @@ export class TaskController {
         return this.taskService.deleteTaskDetails(id);
     }
 
-    handleFilterTasks(filters: {
-        status?: Status;           
-        priority?: Priority;       
-        createdAfter?: string;     
-        createdBefore?: string;    
-    }){
+    handleFilterTasks(filters: TaskFilters){ 
         return this.taskService.filterTasks(filters);
     }
 

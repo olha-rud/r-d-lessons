@@ -5,37 +5,65 @@ import { TaskController } from './modules/tasks/task.controller';
 const taskService = new TaskService();
 const taskController = new TaskController(taskService);
 
-// Тепер ВСІ виклики через КОНТРОЛЕР:
+// ТЕСТИ ФАБРИКИ 
 
-// Тест 1: Отримання деталей завдання
-console.log('Test getTaskDetails(4):', taskController.handleGetTask(4));
-console.log('Test getTaskDetails(999):', taskController.handleGetTask(999));
-
-// Тест 2: Створення нового завдання
+// Створення Task
 const newTask = taskController.handleCreateTask({
-  title: 'Моє нове завдання',
-  description: 'Тестую функцію'
+    type: 'task',  // ← обов'язкове поле!
+    title: 'Моє нове завдання',
+    description: 'Тестую фабрику'
 });
-console.log('Створене завдання:', newTask);
+console.log('Створений Task:', newTask.getTaskInfo());
+
+// Створення Bug
+const newBug = taskController.handleCreateTask({
+    type: 'bug',
+    title: 'Виправити кнопку логіну',
+    severity: 'critical',
+    priority: 'high'
+});
+console.log('Створений Bug:', newBug.getTaskInfo());
+
+// Створення Subtask
+const newSubtask = taskController.handleCreateTask({
+    type: 'subtask',
+    title: 'Написати unit тести',
+    parentTaskId: 1
+});
+console.log('Створений Subtask:', newSubtask.getTaskInfo());
+
+// Створення Story
+const newStory = taskController.handleCreateTask({
+    type: 'story',
+    title: 'Автентифікація користувача',
+    storyPoints: 8
+});
+console.log('Створена Story:', newStory.getTaskInfo());
+
+// Створення Epic
+const newEpic = taskController.handleCreateTask({
+    type: 'epic',
+    title: 'Q1 Реліз',
+    subtaskIds: [1, 2, 3]
+});
+console.log('Створений Epic:', newEpic.getTaskInfo());
+
+// ===== ІНШІ ТЕСТИ =====
+
+console.log('\n--- Фільтрація ---');
 console.log('Всього завдань:', taskController.handleFilterTasks({}).length);
-
-// Тест 3: Оновлення завдання
-const updatedTask = taskController.handleUpdateTask(2, {
-  status: "done",
-  priority: "medium",
-  completedAt: new Date().toISOString()
-});
-console.log('Оновлене завдання:', updatedTask);
-
-// Тест 4: Видалення завдання
-console.log('Видалення завдання 3:', taskController.handleDeleteTask(3));
-
-// Тест 5: Фільтрація
 console.log('Завдання зі статусом "done":', taskController.handleFilterTasks({ status: 'done' }));
-console.log('Високопріоритетні завдання:', taskController.handleFilterTasks({ priority: 'high' }));
-console.log('Завдання створені після 2024-10-03:', taskController.handleFilterTasks({ createdAfter: '2024-10-03' }));
 
-// Тест 6: Перевірка дедлайну
+console.log('\n--- Отримання деталей ---');
+console.log('Завдання #1:', taskController.handleGetTask(1));
+
+console.log('\n--- Перевірка дедлайну ---');
 console.log('Завдання 1 вчасно?', taskController.handleCheckTaskDeadline(1));
-console.log('Завдання 2 вчасно?', taskController.handleCheckTaskDeadline(2));
-console.log('Завдання 3 вчасно?', taskController.handleCheckTaskDeadline(3));
+
+// Тест валідації при update
+console.log('\n--- Тест валідації ---');
+try {
+    taskController.handleUpdateTask(1, { title: '' }); // пустий title
+} catch (error) {
+    console.log('Помилка валідації:', (error as Error).message);
+}
