@@ -1,0 +1,101 @@
+.form-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 32px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-container h2 {
+  margin-bottom: 24px;
+  color: #172b4d;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.task-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #172b4d;
+}
+
+.required {
+  color: #ef4444;
+}
+
+input,
+textarea,
+select {
+  padding: 10px 14px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: #88b061;
+}
+
+input.error,
+textarea.error {
+  border-color: #ef4444;
+}
+
+.error-message {
+  color: #ef4444;
+  font-size: 0.75rem;
+  margin-top: -4px;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.btn-submit {
+  padding: 12px 24px;
+  background: #88b061;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 8px;
+}
+
+.btn-submit:hover:not(:disabled) {
+  background: #6d9049;
+  transform: translateY(-1px);
+}
+
+.btn-submit:disabled {
+  background: #d0d0d0;
+  cursor: not-allowed;
+  transform: none;
+}
