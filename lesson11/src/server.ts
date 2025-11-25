@@ -11,11 +11,6 @@ app.use(cors());
 app.use(morgan("dev"));
 app.use(express.json());
 
-// Health check / root route
-app.get("/", (req, res) => {
-  res.json({ message: "Task API is running", endpoints: ["/tasks"] });
-});
-
 // Routes
 app.use("/tasks", taskRoutes);
 
