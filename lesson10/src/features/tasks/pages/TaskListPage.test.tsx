@@ -34,6 +34,13 @@ const mockTasks: Task[] = [
     priority: 'medium',
     createdAt: '2024-01-02T00:00:00.000Z',
   },
+  {
+    id: '3',
+    title: 'Test Task 3',
+    status: 'done',
+    priority: 'low',
+    createdAt: '2024-01-03T00:00:00.000Z',
+  },
 ];
 
 describe('TaskListPage', () => {
@@ -53,6 +60,7 @@ describe('TaskListPage', () => {
     await waitFor(() => {
       expect(screen.getByText('Test Task 1')).toBeInTheDocument();
       expect(screen.getByText('Test Task 2')).toBeInTheDocument();
+      expect(screen.getByText('Test Task 3')).toBeInTheDocument();
     });
 
     expect(screen.getByText('Description 1')).toBeInTheDocument();
@@ -60,6 +68,51 @@ describe('TaskListPage', () => {
 
     expect(screen.getByText('🔴 High')).toBeInTheDocument();
     expect(screen.getByText('🟡 Medium')).toBeInTheDocument();
+  });
+
+  it('should display kanban columns with correct titles', async () => {
+    vi.mocked(taskApi.getTasks).mockResolvedValue(mockTasks);
+
+    render(
+      <BrowserRouter>
+        <TaskListPage />
+      </BrowserRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('To Do')).toBeInTheDocument();
+      expect(screen.getByText('In Progress')).toBeInTheDocument();
+      expect(screen.getByText('Done')).toBeInTheDocument();
+    });
+
+    // Check that all three columns exist
+    expect(screen.getByTestId('kanban-column-todo')).toBeInTheDocument();
+    expect(screen.getByTestId('kanban-column-inProgress')).toBeInTheDocument();
+    expect(screen.getByTestId('kanban-column-done')).toBeInTheDocument();
+  });
+
+  it('should display task count in column headers', async () => {
+    vi.mocked(taskApi.getTasks).mockResolvedValue(mockTasks);
+
+    render(
+      <BrowserRouter>
+        <TaskListPage />
+      </BrowserRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Test Task 1')).toBeInTheDocument();
+    });
+
+    // Each column should have a count badge
+    // Todo: 1 task, In Progress: 1 task, Done: 1 task
+    const todoColumn = screen.getByTestId('kanban-column-todo');
+    const inProgressColumn = screen.getByTestId('kanban-column-inProgress');
+    const doneColumn = screen.getByTestId('kanban-column-done');
+
+    expect(todoColumn).toBeInTheDocument();
+    expect(inProgressColumn).toBeInTheDocument();
+    expect(doneColumn).toBeInTheDocument();
   });
 
   it('should display empty state when task list is empty', async () => {

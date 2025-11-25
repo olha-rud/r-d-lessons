@@ -36,24 +36,24 @@ describe('CreateTaskForm', () => {
     });
   });
 
-it('should show error message when title is empty and touched', async () => {
-  const user = userEvent.setup();
-  render(<CreateTaskForm onSuccess={mockOnSuccess} />);
+  it('should show error message when title is empty and touched', async () => {
+    const user = userEvent.setup();
+    render(<CreateTaskForm onSuccess={mockOnSuccess} />);
 
-  const titleInput = screen.getByLabelText(/title/i);
-  const submitButton = screen.getByRole('button', { name: /create task/i });
+    const titleInput = screen.getByLabelText(/title/i);
+    const submitButton = screen.getByRole('button', { name: /create task/i });
 
-  // Type something then delete it to trigger validation
-  await user.type(titleInput, 'a');
-  await user.clear(titleInput);
+    // Type something then delete it to trigger validation
+    await user.type(titleInput, 'a');
+    await user.clear(titleInput);
 
-  await waitFor(() => {
-    expect(screen.getByText(/title is required/i)).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText(/title is required/i)).toBeInTheDocument();
+    });
+
+    // Button should remain disabled
+    expect(submitButton).toBeDisabled();
   });
-
-  // Button should remain disabled
-  expect(submitButton).toBeDisabled();
-});
 
   it('should show error message when title is too long', async () => {
     const user = userEvent.setup();

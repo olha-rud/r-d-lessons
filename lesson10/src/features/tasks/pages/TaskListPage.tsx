@@ -4,8 +4,14 @@ import { getTasks } from '../api/taskApi';
 import { TaskCard } from '../components/TaskCard';
 import { EmptyState } from '../../../shared/components/EmptyState';
 import { ErrorMessage } from '../../../shared/components/ErrorMessage';
-import type { Task } from '../types';
+import type { Task, Status } from '../types';
 import './TaskListPage.css';
+
+const COLUMNS: { status: Status; title: string; icon: string }[] = [
+  { status: 'todo', title: 'To Do', icon: '📋' },
+  { status: 'inProgress', title: 'In Progress', icon: '⚙️' },
+  { status: 'done', title: 'Done', icon: '✅' },
+];
 
 export function TaskListPage() {
   const navigate = useNavigate();
@@ -29,6 +35,10 @@ export function TaskListPage() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const getTasksByStatus = (status: Status): Task[] => {
+    return tasks.filter((task) => task.status === status);
   };
 
   if (isLoading) {
@@ -65,10 +75,34 @@ export function TaskListPage() {
           description="Create your first task to get started"
         />
       ) : (
-        <div className="task-list">
-          {tasks.map((task) => (
-            <TaskCard key={task.id} task={task} />
-          ))}
+        <div className="kanban-board">
+          {COLUMNS.map((column) => {
+            const columnTasks = getTasksByStatus(column.status);
+            return (
+              <div 
+                key={column.status} 
+                className="kanban-column"
+                data-testid={`kanban-column-${column.status}`}
+              >
+                <div className="column-header">
+                  <span className="column-icon">{column.icon}</span>
+                  <h2 className="column-title">{column.title}</h2>
+                  <span className="column-count">{columnTasks.length}</span>
+                </div>
+                <div className="column-content">
+                  {columnTasks.length === 0 ? (
+                    <div className="column-empty">
+                      No tasks
+                    </div>
+                  ) : (
+                    columnTasks.map((task) => (
+                      <TaskCard key={task.id} task={task} />
+                    ))
+                  )}
+                </div>
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
