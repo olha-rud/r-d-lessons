@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getTasks } from '../api/taskApi';
+import { getTasks } from '../api';
 import { TaskCard } from '../components/TaskCard';
 import { EmptyState } from '../../../shared/components/EmptyState';
 import { ErrorMessage } from '../../../shared/components/ErrorMessage';

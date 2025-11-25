@@ -35,6 +35,33 @@
       "priority": "medium",
       "deadline": "2025-11-29",
       "createdAt": "2025-11-25T10:45:36.301Z"
+    },
+    {
+      "id": "4c1b",
+      "title": "New Task",
+      "description": "Task description",
+      "status": "todo",
+      "priority": "medium",
+      "deadline": "",
+      "createdAt": "2025-11-25T11:48:08.628Z"
+    },
+    {
+      "id": "8d59",
+      "title": "New Task",
+      "description": "",
+      "status": "todo",
+      "priority": "medium",
+      "deadline": "",
+      "createdAt": "2025-11-25T11:48:09.765Z"
+    },
+    {
+      "id": "bae8",
+      "title": "New Task",
+      "description": "",
+      "status": "todo",
+      "priority": "medium",
+      "deadline": "",
+      "createdAt": "2025-11-25T11:48:09.887Z"
     }
   ]
 }

@@ -58,6 +58,7 @@ export const TEXT = {
   CREATE_FIRST_TASK: 'Create your first task to get started',
   FAILED_TO_LOAD_TASKS: /Failed to load tasks. Please try again./i,
   FAILED_TO_LOAD_TASK: /Failed to load task/i,
+  FAILED_TO_CREATE_TASK: /Failed to create task/i,
   TITLE_REQUIRED: /title is required/i,
   TITLE_TOO_LONG: /title must be less than 100 characters/i,
   DEADLINE_IN_PAST: /deadline cannot be in the past/i,

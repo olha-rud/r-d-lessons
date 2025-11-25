@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getTaskById, deleteTask } from '../api/taskApi';
+import { getTaskById, deleteTask } from '../api';
 import { ErrorMessage } from '../../../shared/components/ErrorMessage';
 import type { Task } from '../types';
 import './TaskDetailPage.css';

@@ -1,7 +1,8 @@
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { createTask } from '../api/taskApi';
+import { createTask } from '../api';
 import './CreateTaskForm.css';
 
 const taskSchema = z.object({
@@ -34,6 +35,8 @@ type CreateTaskFormProps = {
 };
 
 export function CreateTaskForm({ onSuccess }: CreateTaskFormProps) {
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
   const {
     register,
     handleSubmit,
@@ -50,6 +53,7 @@ export function CreateTaskForm({ onSuccess }: CreateTaskFormProps) {
 
   const onSubmit = async (data: TaskFormData) => {
     try {
+      setSubmitError(null);
       const taskData = {
         ...data,
         createdAt: new Date().toISOString(),
@@ -60,13 +64,18 @@ export function CreateTaskForm({ onSuccess }: CreateTaskFormProps) {
       onSuccess();
     } catch (error) {
       console.error('Error creating task:', error);
-      alert('❌ Failed to create task');
+      setSubmitError('Failed to create task. Please try again.');
     }
   };
 
   return (
     <div className="form-container">
       <h2>Create New Task</h2>
+      {submitError && (
+        <div className="submit-error" role="alert">
+          {submitError}
+        </div>
+      )}
       <form onSubmit={handleSubmit(onSubmit)} className="task-form">
         <div className="form-group">
           <label htmlFor="title">

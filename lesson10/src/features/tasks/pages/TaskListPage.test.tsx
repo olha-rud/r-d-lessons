@@ -1,11 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { TaskListPage } from './TaskListPage';
-import * as taskApi from '../api/taskApi';
-import { MOCK_TASKS, TEST_IDS, TEXT } from '../сonstants';
+import * as taskApi from '../api';
+import { MOCK_TASKS, TEST_IDS, TEXT } from '../constants';
 
-vi.mock('../api/taskApi');
+vi.mock('../api');
 
 describe('TaskListPage', () => {
   beforeEach(() => {
@@ -20,89 +20,84 @@ describe('TaskListPage', () => {
     );
   };
 
-  it('should display all tasks with correct fields', async () => {
-    vi.mocked(taskApi.getTasks).mockResolvedValue(MOCK_TASKS);
+  describe('displaying tasks', () => {
+    it('should display all tasks with correct fields', async () => {
+      vi.mocked(taskApi.getTasks).mockResolvedValue(MOCK_TASKS);
 
-    renderPage();
+      renderPage();
 
-    await waitFor(() => {
-      expect(screen.getByText(MOCK_TASKS[0].title)).toBeInTheDocument();
+      expect(await screen.findByText(MOCK_TASKS[0].title)).toBeInTheDocument();
       expect(screen.getByText(MOCK_TASKS[1].title)).toBeInTheDocument();
       expect(screen.getByText(MOCK_TASKS[2].title)).toBeInTheDocument();
+
+      expect(screen.getByText(MOCK_TASKS[0].description!)).toBeInTheDocument();
+      expect(screen.getByText(MOCK_TASKS[1].description!)).toBeInTheDocument();
+
+      expect(screen.getByText(TEXT.HIGH)).toBeInTheDocument();
+      expect(screen.getByText(TEXT.MEDIUM)).toBeInTheDocument();
     });
 
-    expect(screen.getByText(MOCK_TASKS[0].description!)).toBeInTheDocument();
-    expect(screen.getByText(MOCK_TASKS[1].description!)).toBeInTheDocument();
+    it('should display kanban columns with correct titles', async () => {
+      vi.mocked(taskApi.getTasks).mockResolvedValue(MOCK_TASKS);
 
-    expect(screen.getByText(TEXT.HIGH)).toBeInTheDocument();
-    expect(screen.getByText(TEXT.MEDIUM)).toBeInTheDocument();
-  });
+      renderPage();
 
-  it('should display kanban columns with correct titles', async () => {
-    vi.mocked(taskApi.getTasks).mockResolvedValue(MOCK_TASKS);
-
-    renderPage();
-
-    await waitFor(() => {
-      expect(screen.getByText(TEXT.TODO)).toBeInTheDocument();
+      expect(await screen.findByText(TEXT.TODO)).toBeInTheDocument();
       expect(screen.getByText(TEXT.IN_PROGRESS)).toBeInTheDocument();
       expect(screen.getByText(TEXT.DONE)).toBeInTheDocument();
+
+      expect(screen.getByTestId(TEST_IDS.KANBAN_COLUMN_TODO)).toBeInTheDocument();
+      expect(screen.getByTestId(TEST_IDS.KANBAN_COLUMN_IN_PROGRESS)).toBeInTheDocument();
+      expect(screen.getByTestId(TEST_IDS.KANBAN_COLUMN_DONE)).toBeInTheDocument();
     });
 
-    expect(screen.getByTestId(TEST_IDS.KANBAN_COLUMN_TODO)).toBeInTheDocument();
-    expect(screen.getByTestId(TEST_IDS.KANBAN_COLUMN_IN_PROGRESS)).toBeInTheDocument();
-    expect(screen.getByTestId(TEST_IDS.KANBAN_COLUMN_DONE)).toBeInTheDocument();
-  });
+    it('should display task count in column headers', async () => {
+      vi.mocked(taskApi.getTasks).mockResolvedValue(MOCK_TASKS);
 
-  it('should display task count in column headers', async () => {
-    vi.mocked(taskApi.getTasks).mockResolvedValue(MOCK_TASKS);
+      renderPage();
 
-    renderPage();
+      expect(await screen.findByText(MOCK_TASKS[0].title)).toBeInTheDocument();
 
-    await waitFor(() => {
-      expect(screen.getByText(MOCK_TASKS[0].title)).toBeInTheDocument();
-    });
+      const todoColumn = screen.getByTestId(TEST_IDS.KANBAN_COLUMN_TODO);
+      const inProgressColumn = screen.getByTestId(TEST_IDS.KANBAN_COLUMN_IN_PROGRESS);
+      const doneColumn = screen.getByTestId(TEST_IDS.KANBAN_COLUMN_DONE);
 
-    const todoColumn = screen.getByTestId(TEST_IDS.KANBAN_COLUMN_TODO);
-    const inProgressColumn = screen.getByTestId(TEST_IDS.KANBAN_COLUMN_IN_PROGRESS);
-    const doneColumn = screen.getByTestId(TEST_IDS.KANBAN_COLUMN_DONE);
-
-    expect(todoColumn).toBeInTheDocument();
-    expect(inProgressColumn).toBeInTheDocument();
-    expect(doneColumn).toBeInTheDocument();
-  });
-
-  it('should display empty state when task list is empty', async () => {
-    vi.mocked(taskApi.getTasks).mockResolvedValue([]);
-
-    renderPage();
-
-    await waitFor(() => {
-      expect(screen.getByText(TEXT.NO_TASKS)).toBeInTheDocument();
-    });
-
-    expect(screen.getByText(TEXT.CREATE_FIRST_TASK)).toBeInTheDocument();
-  });
-
-  it('should display error message when API fails', async () => {
-    vi.mocked(taskApi.getTasks).mockRejectedValue(
-      new Error('Failed to fetch tasks')
-    );
-
-    renderPage();
-
-    await waitFor(() => {
-      expect(screen.getByText(TEXT.FAILED_TO_LOAD_TASKS)).toBeInTheDocument();
+      expect(todoColumn).toBeInTheDocument();
+      expect(inProgressColumn).toBeInTheDocument();
+      expect(doneColumn).toBeInTheDocument();
     });
   });
 
-  it('should display loading state initially', () => {
-    vi.mocked(taskApi.getTasks).mockImplementation(
-      () => new Promise(() => {})
-    );
+  describe('empty and loading states', () => {
+    it('should display empty state when task list is empty', async () => {
+      vi.mocked(taskApi.getTasks).mockResolvedValue([]);
 
-    renderPage();
+      renderPage();
 
-    expect(screen.getByText(TEXT.LOADING)).toBeInTheDocument();
+      expect(await screen.findByText(TEXT.NO_TASKS)).toBeInTheDocument();
+      expect(screen.getByText(TEXT.CREATE_FIRST_TASK)).toBeInTheDocument();
+    });
+
+    it('should display loading state initially', () => {
+      vi.mocked(taskApi.getTasks).mockImplementation(
+        () => new Promise(() => {})
+      );
+
+      renderPage();
+
+      expect(screen.getByText(TEXT.LOADING)).toBeInTheDocument();
+    });
+  });
+
+  describe('error handling', () => {
+    it('should display error message when API fails', async () => {
+      vi.mocked(taskApi.getTasks).mockRejectedValue(
+        new Error('Failed to fetch tasks')
+      );
+
+      renderPage();
+
+      expect(await screen.findByText(TEXT.FAILED_TO_LOAD_TASKS)).toBeInTheDocument();
+    });
   });
 });
