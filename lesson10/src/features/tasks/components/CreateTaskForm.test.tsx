@@ -3,6 +3,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { CreateTaskForm } from './CreateTaskForm';
 import * as taskApi from '../api/taskApi';
+import { TEXT } from '../сonstants';
 
 vi.mock('../api/taskApi');
 
@@ -16,7 +17,7 @@ describe('CreateTaskForm', () => {
   it('should have submit button disabled when form is empty', () => {
     render(<CreateTaskForm onSuccess={mockOnSuccess} />);
 
-    const submitButton = screen.getByRole('button', { name: /create task/i });
+    const submitButton = screen.getByRole('button', { name: TEXT.CREATE_TASK });
     expect(submitButton).toBeDisabled();
   });
 
@@ -25,7 +26,7 @@ describe('CreateTaskForm', () => {
     render(<CreateTaskForm onSuccess={mockOnSuccess} />);
 
     const titleInput = screen.getByLabelText(/title/i);
-    const submitButton = screen.getByRole('button', { name: /create task/i });
+    const submitButton = screen.getByRole('button', { name: TEXT.CREATE_TASK });
 
     expect(submitButton).toBeDisabled();
 
@@ -41,17 +42,15 @@ describe('CreateTaskForm', () => {
     render(<CreateTaskForm onSuccess={mockOnSuccess} />);
 
     const titleInput = screen.getByLabelText(/title/i);
-    const submitButton = screen.getByRole('button', { name: /create task/i });
+    const submitButton = screen.getByRole('button', { name: TEXT.CREATE_TASK });
 
-    // Type something then delete it to trigger validation
     await user.type(titleInput, 'a');
     await user.clear(titleInput);
 
     await waitFor(() => {
-      expect(screen.getByText(/title is required/i)).toBeInTheDocument();
+      expect(screen.getByText(TEXT.TITLE_REQUIRED)).toBeInTheDocument();
     });
 
-    // Button should remain disabled
     expect(submitButton).toBeDisabled();
   });
 
@@ -65,9 +64,7 @@ describe('CreateTaskForm', () => {
     await user.type(titleInput, longTitle);
 
     await waitFor(() => {
-      expect(
-        screen.getByText(/title must be less than 100 characters/i)
-      ).toBeInTheDocument();
+      expect(screen.getByText(TEXT.TITLE_TOO_LONG)).toBeInTheDocument();
     });
   });
 
@@ -82,9 +79,7 @@ describe('CreateTaskForm', () => {
     await user.type(deadlineInput, '2020-01-01');
 
     await waitFor(() => {
-      expect(
-        screen.getByText(/deadline cannot be in the past/i)
-      ).toBeInTheDocument();
+      expect(screen.getByText(TEXT.DEADLINE_IN_PAST)).toBeInTheDocument();
     });
   });
 
@@ -102,7 +97,7 @@ describe('CreateTaskForm', () => {
 
     const titleInput = screen.getByLabelText(/title/i);
     const descriptionInput = screen.getByLabelText(/description/i);
-    const submitButton = screen.getByRole('button', { name: /create task/i });
+    const submitButton = screen.getByRole('button', { name: TEXT.CREATE_TASK });
 
     await user.type(titleInput, 'New Task');
     await user.type(descriptionInput, 'Task description');

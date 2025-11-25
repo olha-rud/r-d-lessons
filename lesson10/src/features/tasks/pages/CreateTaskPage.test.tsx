@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { BrowserRouter } from 'react-router-dom';
 import { CreateTaskPage } from './CreateTaskPage';
+import { ROUTES, TEXT } from '../сonstants';
 
 const mockNavigate = vi.fn();
 vi.mock('react-router-dom', async () => {
@@ -14,14 +15,18 @@ vi.mock('react-router-dom', async () => {
 });
 
 describe('CreateTaskPage', () => {
-  it('should render create task form', () => {
-    render(
+  const renderPage = () => {
+    return render(
       <BrowserRouter>
         <CreateTaskPage />
       </BrowserRouter>
     );
+  };
 
-    expect(screen.getByText('Create New Task')).toBeInTheDocument();
+  it('should render create task form', () => {
+    renderPage();
+
+    expect(screen.getByText(TEXT.CREATE_NEW_TASK)).toBeInTheDocument();
     expect(screen.getByLabelText(/title/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/description/i)).toBeInTheDocument();
   });
@@ -29,15 +34,11 @@ describe('CreateTaskPage', () => {
   it('should navigate back when back button is clicked', async () => {
     const user = userEvent.setup();
 
-    render(
-      <BrowserRouter>
-        <CreateTaskPage />
-      </BrowserRouter>
-    );
+    renderPage();
 
-    const backButton = screen.getByRole('button', { name: /back to tasks/i });
+    const backButton = screen.getByRole('button', { name: TEXT.BACK_TO_TASKS });
     await user.click(backButton);
 
-    expect(mockNavigate).toHaveBeenCalledWith('/tasks');
+    expect(mockNavigate).toHaveBeenCalledWith(ROUTES.TASKS);
   });
 });
