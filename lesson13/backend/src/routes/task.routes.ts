@@ -12,7 +12,12 @@ const router = Router();
 router.get("/", validateFilters, taskController.getTasks);
 router.get("/:id", validateIdParam, taskController.getTask);
 router.post("/", validateCreateTask, taskController.createTask);
-router.put("/:id", validateIdParam, validateUpdateTask, taskController.updateTask);
+router.put(
+  "/:id",
+  validateIdParam,
+  validateUpdateTask,
+  taskController.updateTask,
+);
 router.delete("/:id", validateIdParam, taskController.deleteTask);
 
 export default router;

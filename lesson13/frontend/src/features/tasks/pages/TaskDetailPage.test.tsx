@@ -1,43 +1,43 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { TaskDetailPage } from './TaskDetailPage';
-import * as taskApi from '../api';
-import { MOCK_TASK, ROUTES, TEXT } from '../constants';
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { TaskDetailPage } from "./TaskDetailPage";
+import * as taskApi from "../api";
+import { MOCK_TASK, ROUTES, TEXT } from "../constants";
 
 const mockNavigate = vi.fn();
-vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom');
+vi.mock("react-router-dom", async () => {
+  const actual = await vi.importActual("react-router-dom");
   return {
     ...actual,
     useNavigate: () => mockNavigate,
   };
 });
 
-vi.mock('../api');
+vi.mock("../api");
 
-describe('TaskDetailPage', () => {
+describe("TaskDetailPage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockNavigate.mockClear();
   });
 
-  const renderPage = (taskId: string = '1') => {
+  const renderPage = (taskId: string = "1") => {
     return render(
       <MemoryRouter initialEntries={[ROUTES.TASK_DETAIL(taskId)]}>
         <Routes>
           <Route path="/tasks/:id" element={<TaskDetailPage />} />
         </Routes>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
   };
 
-  describe('displaying task details', () => {
-    it('should display task details correctly', async () => {
+  describe("displaying task details", () => {
+    it("should display task details correctly", async () => {
       vi.mocked(taskApi.getTaskById).mockResolvedValue(MOCK_TASK);
 
-      renderPage('1');
+      renderPage("1");
 
       expect(await screen.findByText(MOCK_TASK.title)).toBeInTheDocument();
       expect(screen.getByText(MOCK_TASK.description!)).toBeInTheDocument();
@@ -46,78 +46,89 @@ describe('TaskDetailPage', () => {
     });
   });
 
-  describe('error handling', () => {
-    it('should display error message when task is not found', async () => {
+  describe("error handling", () => {
+    it("should display error message when task is not found", async () => {
       vi.mocked(taskApi.getTaskById).mockRejectedValue(
-        new Error('Task not found')
+        new Error("Task not found"),
       );
 
-      renderPage('999');
+      renderPage("999");
 
-      expect(await screen.findByText(TEXT.FAILED_TO_LOAD_TASK)).toBeInTheDocument();
+      expect(
+        await screen.findByText(TEXT.FAILED_TO_LOAD_TASK),
+      ).toBeInTheDocument();
     });
   });
 
-  describe('navigation', () => {
-    it('should navigate back to task list when back button is clicked', async () => {
+  describe("navigation", () => {
+    it("should navigate back to task list when back button is clicked", async () => {
       vi.mocked(taskApi.getTaskById).mockResolvedValue(MOCK_TASK);
       const user = userEvent.setup();
 
-      renderPage('1');
+      renderPage("1");
 
       expect(await screen.findByText(MOCK_TASK.title)).toBeInTheDocument();
 
-      const backButton = screen.getByRole('button', { name: TEXT.BACK_TO_TASKS });
+      const backButton = screen.getByRole("button", {
+        name: TEXT.BACK_TO_TASKS,
+      });
       await user.click(backButton);
 
       expect(mockNavigate).toHaveBeenCalledWith(ROUTES.TASKS);
     });
   });
 
-  describe('delete task', () => {
-    it('should show confirmation dialog and delete task when delete button is clicked', async () => {
+  describe("delete task", () => {
+    it("should show confirmation dialog and delete task when confirmed", async () => {
       vi.mocked(taskApi.getTaskById).mockResolvedValue(MOCK_TASK);
       vi.mocked(taskApi.deleteTask).mockResolvedValue();
-      
-      const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
-      
+
       const user = userEvent.setup();
 
-      renderPage('1');
+      renderPage("1");
 
       expect(await screen.findByText(MOCK_TASK.title)).toBeInTheDocument();
 
-      const deleteButton = screen.getByRole('button', { name: TEXT.DELETE_TASK });
+      const deleteButton = screen.getByRole("button", {
+        name: TEXT.DELETE_TASK,
+      });
       await user.click(deleteButton);
 
-      expect(confirmSpy).toHaveBeenCalled();
-      
+      expect(screen.getByText("Delete Task")).toBeInTheDocument();
+      expect(
+        screen.getByText(/Are you sure you want to delete this task/),
+      ).toBeInTheDocument();
+
+      const confirmButton = screen.getByRole("button", { name: "Delete" });
+      await user.click(confirmButton);
+
       await waitFor(() => {
-        expect(taskApi.deleteTask).toHaveBeenCalledWith('1');
+        expect(taskApi.deleteTask).toHaveBeenCalledWith("1");
         expect(mockNavigate).toHaveBeenCalledWith(ROUTES.TASKS);
       });
-
-      confirmSpy.mockRestore();
     });
 
-    it('should not delete task when confirmation is cancelled', async () => {
+    it("should not delete task when confirmation is cancelled", async () => {
       vi.mocked(taskApi.getTaskById).mockResolvedValue(MOCK_TASK);
-      
-      const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(false);
-      
+
       const user = userEvent.setup();
 
-      renderPage('1');
+      renderPage("1");
 
       expect(await screen.findByText(MOCK_TASK.title)).toBeInTheDocument();
 
-      const deleteButton = screen.getByRole('button', { name: TEXT.DELETE_TASK });
+      const deleteButton = screen.getByRole("button", {
+        name: TEXT.DELETE_TASK,
+      });
       await user.click(deleteButton);
 
-      expect(confirmSpy).toHaveBeenCalled();
-      expect(taskApi.deleteTask).not.toHaveBeenCalled();
+      expect(screen.getByText("Delete Task")).toBeInTheDocument();
 
-      confirmSpy.mockRestore();
+      const cancelButton = screen.getByRole("button", { name: "Cancel" });
+      await user.click(cancelButton);
+
+      expect(taskApi.deleteTask).not.toHaveBeenCalled();
+      expect(screen.queryByText("Delete Task")).not.toBeInTheDocument();
     });
   });
 });

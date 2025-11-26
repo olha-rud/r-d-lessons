@@ -1,29 +1,29 @@
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { getTaskById, deleteTask } from '../api';
-import { ErrorMessage } from '../../../shared/components/ErrorMessage';
-import { ConfirmDialog } from '../../../shared/components/ConfirmDialog';
-import type { Task } from '../types';
-import './TaskDetailPage.css';
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { getTaskById, deleteTask } from "../api";
+import { ErrorMessage } from "../../../shared/components/ErrorMessage";
+import { ConfirmDialog } from "../../../shared/components/ConfirmDialog";
+import type { Task } from "../types";
+import "./TaskDetailPage.css";
 
 const PRIORITY_TEXT = {
-  low: '🟢 Low Priority',
-  medium: '🟡 Medium Priority',
-  high: '🔴 High Priority',
+  low: "🟢 Low Priority",
+  medium: "🟡 Medium Priority",
+  high: "🔴 High Priority",
 };
 
 const STATUS_TEXT = {
-  pending: 'Pending',
-  'in-progress': 'In Progress',
-  completed: 'Completed',
+  pending: "Pending",
+  "in-progress": "In Progress",
+  completed: "Completed",
 };
 
 function formatDate(dateString: string): string {
   const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
+  return date.toLocaleDateString("en-US", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
   });
 }
 
@@ -49,8 +49,8 @@ export function TaskDetailPage() {
       const data = await getTaskById(taskId);
       setTask(data);
     } catch (err) {
-      console.error('Error loading task:', err);
-      setError('Failed to load task. It may have been deleted.');
+      console.error("Error loading task:", err);
+      setError("Failed to load task. It may have been deleted.");
     } finally {
       setIsLoading(false);
     }
@@ -70,10 +70,10 @@ export function TaskDetailPage() {
 
     try {
       await deleteTask(task.id);
-      navigate('/tasks');
+      navigate("/tasks");
     } catch (err) {
-      console.error('Error deleting task:', err);
-      setDeleteError('Failed to delete task. Please try again.');
+      console.error("Error deleting task:", err);
+      setDeleteError("Failed to delete task. Please try again.");
     }
   };
 
@@ -92,17 +92,17 @@ export function TaskDetailPage() {
   if (error || !task) {
     return (
       <div className="task-detail-page">
-        <button className="btn-back" onClick={() => navigate('/tasks')}>
+        <button className="btn-back" onClick={() => navigate("/tasks")}>
           ← Back to Tasks
         </button>
-        <ErrorMessage message={error || 'Task not found'} />
+        <ErrorMessage message={error || "Task not found"} />
       </div>
     );
   }
 
   return (
     <div className="task-detail-page">
-      <button className="btn-back" onClick={() => navigate('/tasks')}>
+      <button className="btn-back" onClick={() => navigate("/tasks")}>
         ← Back to Tasks
       </button>
 
@@ -136,7 +136,9 @@ export function TaskDetailPage() {
             {task.deadline && (
               <div className="detail-item">
                 <span className="detail-label">Deadline:</span>
-                <span className="detail-value">📅 {formatDate(task.deadline)}</span>
+                <span className="detail-value">
+                  📅 {formatDate(task.deadline)}
+                </span>
               </div>
             )}
           </div>

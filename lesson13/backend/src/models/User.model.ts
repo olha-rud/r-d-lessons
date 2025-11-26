@@ -8,9 +8,12 @@ interface UserAttributes {
   email: string;
 }
 
-interface UserCreationAttributes extends Optional<UserAttributes, "id"> {}
+type UserCreationAttributes = Optional<UserAttributes, "id">;
 
-class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
+class User
+  extends Model<UserAttributes, UserCreationAttributes>
+  implements UserAttributes
+{
   declare id: number;
   declare firstName: string;
   declare lastName: string;
@@ -44,7 +47,7 @@ User.init(
   {
     sequelize,
     tableName: "users",
-  }
+  },
 );
 
 export default User;

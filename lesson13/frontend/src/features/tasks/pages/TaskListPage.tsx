@@ -1,16 +1,16 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { getTasks } from '../api';
-import { TaskCard } from '../components/TaskCard';
-import { EmptyState } from '../../../shared/components/EmptyState';
-import { ErrorMessage } from '../../../shared/components/ErrorMessage';
-import type { Task, Status } from '../types';
-import './TaskListPage.css';
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { getTasks } from "../api";
+import { TaskCard } from "../components/TaskCard";
+import { EmptyState } from "../../../shared/components/EmptyState";
+import { ErrorMessage } from "../../../shared/components/ErrorMessage";
+import type { Task, Status } from "../types";
+import "./TaskListPage.css";
 
 const COLUMNS: { status: Status; title: string; icon: string }[] = [
-  { status: 'pending', title: 'Pending', icon: '📋' },
-  { status: 'in-progress', title: 'In Progress', icon: '⚙️' },
-  { status: 'completed', title: 'Completed', icon: '✅' },
+  { status: "pending", title: "Pending", icon: "📋" },
+  { status: "in-progress", title: "In Progress", icon: "⚙️" },
+  { status: "completed", title: "Completed", icon: "✅" },
 ];
 
 export function TaskListPage() {
@@ -30,8 +30,8 @@ export function TaskListPage() {
       const data = await getTasks();
       setTasks(data);
     } catch (err) {
-      console.error('Error loading tasks:', err);
-      setError('Failed to load tasks. Please try again.');
+      console.error("Error loading tasks:", err);
+      setError("Failed to load tasks. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -63,7 +63,7 @@ export function TaskListPage() {
         <h1>My Tasks</h1>
         <button
           className="btn-create"
-          onClick={() => navigate('/tasks/create')}
+          onClick={() => navigate("/tasks/create")}
         >
           + Create Task
         </button>
@@ -79,8 +79,8 @@ export function TaskListPage() {
           {COLUMNS.map((column) => {
             const columnTasks = getTasksByStatus(column.status);
             return (
-              <div 
-                key={column.status} 
+              <div
+                key={column.status}
                 className="kanban-column"
                 data-testid={`kanban-column-${column.status}`}
               >
@@ -91,9 +91,7 @@ export function TaskListPage() {
                 </div>
                 <div className="column-content">
                   {columnTasks.length === 0 ? (
-                    <div className="column-empty">
-                      No tasks
-                    </div>
+                    <div className="column-empty">No tasks</div>
                   ) : (
                     columnTasks.map((task) => (
                       <TaskCard key={task.id} task={task} />

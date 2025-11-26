@@ -1,7 +1,12 @@
 import { DataTypes, Model, Optional } from "sequelize";
 import sequelize from "../config/database.js";
 import User from "./User.model.js";
-import { TASK_STATUSES, TASK_PRIORITIES, TaskStatus, TaskPriority } from "../constants/task.constants.js";
+import {
+  TASK_STATUSES,
+  TASK_PRIORITIES,
+  TaskStatus,
+  TaskPriority,
+} from "../constants/task.constants.js";
 
 interface TaskAttributes {
   id: number;
@@ -14,9 +19,15 @@ interface TaskAttributes {
   updatedAt?: Date;
 }
 
-interface TaskCreationAttributes extends Optional<TaskAttributes, "id" | "status" | "priority" | "assigneeId"> {}
+type TaskCreationAttributes = Optional<
+  TaskAttributes,
+  "id" | "status" | "priority" | "assigneeId"
+>;
 
-class Task extends Model<TaskAttributes, TaskCreationAttributes> implements TaskAttributes {
+class Task
+  extends Model<TaskAttributes, TaskCreationAttributes>
+  implements TaskAttributes
+{
   declare id: number;
   declare title: string;
   declare description: string;
@@ -65,7 +76,7 @@ Task.init(
   {
     sequelize,
     tableName: "tasks",
-  }
+  },
 );
 
 Task.belongsTo(User, { foreignKey: "assigneeId", as: "assignee" });

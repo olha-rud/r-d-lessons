@@ -1,20 +1,20 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { BrowserRouter } from 'react-router-dom';
-import { CreateTaskPage } from './CreateTaskPage';
-import { ROUTES, TEXT } from '../constants';
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { BrowserRouter } from "react-router-dom";
+import { CreateTaskPage } from "./CreateTaskPage";
+import { ROUTES, TEXT } from "../constants";
 
 const mockNavigate = vi.fn();
-vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom');
+vi.mock("react-router-dom", async () => {
+  const actual = await vi.importActual("react-router-dom");
   return {
     ...actual,
     useNavigate: () => mockNavigate,
   };
 });
 
-describe('CreateTaskPage', () => {
+describe("CreateTaskPage", () => {
   beforeEach(() => {
     mockNavigate.mockClear();
   });
@@ -23,12 +23,12 @@ describe('CreateTaskPage', () => {
     return render(
       <BrowserRouter>
         <CreateTaskPage />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
   };
 
-  describe('rendering', () => {
-    it('should render create task form', () => {
+  describe("rendering", () => {
+    it("should render create task form", () => {
       renderPage();
 
       expect(screen.getByText(TEXT.CREATE_NEW_TASK)).toBeInTheDocument();
@@ -37,13 +37,15 @@ describe('CreateTaskPage', () => {
     });
   });
 
-  describe('navigation', () => {
-    it('should navigate back when back button is clicked', async () => {
+  describe("navigation", () => {
+    it("should navigate back when back button is clicked", async () => {
       const user = userEvent.setup();
 
       renderPage();
 
-      const backButton = screen.getByRole('button', { name: TEXT.BACK_TO_TASKS });
+      const backButton = screen.getByRole("button", {
+        name: TEXT.BACK_TO_TASKS,
+      });
       await user.click(backButton);
 
       expect(mockNavigate).toHaveBeenCalledWith(ROUTES.TASKS);

@@ -1,7 +1,11 @@
 import type { Request, Response, NextFunction } from "express";
 import * as taskService from "../services/task.service.js";
 
-export const getTasks = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const getTasks = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
   try {
     const tasks = await taskService.getAllTasks(req.query);
     res.json(tasks);
@@ -10,7 +14,11 @@ export const getTasks = async (req: Request, res: Response, next: NextFunction):
   }
 };
 
-export const getTask = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const getTask = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
   try {
     const id = parseInt(req.params.id, 10);
     const task = await taskService.getTaskById(id);
@@ -26,7 +34,11 @@ export const getTask = async (req: Request, res: Response, next: NextFunction): 
   }
 };
 
-export const createTask = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const createTask = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
   try {
     const task = await taskService.createTask(req.body);
     res.status(201).json(task);
@@ -35,7 +47,11 @@ export const createTask = async (req: Request, res: Response, next: NextFunction
   }
 };
 
-export const updateTask = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const updateTask = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
   try {
     const id = parseInt(req.params.id, 10);
     const task = await taskService.updateTask(id, req.body);
@@ -51,7 +67,11 @@ export const updateTask = async (req: Request, res: Response, next: NextFunction
   }
 };
 
-export const deleteTask = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const deleteTask = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
   try {
     const id = parseInt(req.params.id, 10);
     const deleted = await taskService.deleteTask(id);

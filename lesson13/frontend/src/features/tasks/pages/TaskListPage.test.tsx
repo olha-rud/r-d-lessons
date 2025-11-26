@@ -1,13 +1,13 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
-import { BrowserRouter } from 'react-router-dom';
-import { TaskListPage } from './TaskListPage';
-import * as taskApi from '../api';
-import { MOCK_TASKS, TEST_IDS, TEXT } from '../constants';
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { render, screen } from "@testing-library/react";
+import { BrowserRouter } from "react-router-dom";
+import { TaskListPage } from "./TaskListPage";
+import * as taskApi from "../api";
+import { MOCK_TASKS, TEST_IDS, TEXT } from "../constants";
 
-vi.mock('../api');
+vi.mock("../api");
 
-describe('TaskListPage', () => {
+describe("TaskListPage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -16,12 +16,12 @@ describe('TaskListPage', () => {
     return render(
       <BrowserRouter>
         <TaskListPage />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
   };
 
-  describe('displaying tasks', () => {
-    it('should display all tasks with correct fields', async () => {
+  describe("displaying tasks", () => {
+    it("should display all tasks with correct fields", async () => {
       vi.mocked(taskApi.getTasks).mockResolvedValue(MOCK_TASKS);
 
       renderPage();
@@ -37,7 +37,7 @@ describe('TaskListPage', () => {
       expect(screen.getByText(TEXT.MEDIUM)).toBeInTheDocument();
     });
 
-    it('should display kanban columns with correct titles', async () => {
+    it("should display kanban columns with correct titles", async () => {
       vi.mocked(taskApi.getTasks).mockResolvedValue(MOCK_TASKS);
 
       renderPage();
@@ -46,12 +46,18 @@ describe('TaskListPage', () => {
       expect(screen.getByText(TEXT.IN_PROGRESS)).toBeInTheDocument();
       expect(screen.getByText(TEXT.COMPLETED)).toBeInTheDocument();
 
-      expect(screen.getByTestId(TEST_IDS.KANBAN_COLUMN_PENDING)).toBeInTheDocument();
-      expect(screen.getByTestId(TEST_IDS.KANBAN_COLUMN_IN_PROGRESS)).toBeInTheDocument();
-      expect(screen.getByTestId(TEST_IDS.KANBAN_COLUMN_COMPLETED)).toBeInTheDocument();
+      expect(
+        screen.getByTestId(TEST_IDS.KANBAN_COLUMN_PENDING),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByTestId(TEST_IDS.KANBAN_COLUMN_IN_PROGRESS),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByTestId(TEST_IDS.KANBAN_COLUMN_COMPLETED),
+      ).toBeInTheDocument();
     });
 
-    it('should display task count in column headers', async () => {
+    it("should display task count in column headers", async () => {
       vi.mocked(taskApi.getTasks).mockResolvedValue(MOCK_TASKS);
 
       renderPage();
@@ -59,8 +65,12 @@ describe('TaskListPage', () => {
       expect(await screen.findByText(MOCK_TASKS[0].title)).toBeInTheDocument();
 
       const pendingColumn = screen.getByTestId(TEST_IDS.KANBAN_COLUMN_PENDING);
-      const inProgressColumn = screen.getByTestId(TEST_IDS.KANBAN_COLUMN_IN_PROGRESS);
-      const completedColumn = screen.getByTestId(TEST_IDS.KANBAN_COLUMN_COMPLETED);
+      const inProgressColumn = screen.getByTestId(
+        TEST_IDS.KANBAN_COLUMN_IN_PROGRESS,
+      );
+      const completedColumn = screen.getByTestId(
+        TEST_IDS.KANBAN_COLUMN_COMPLETED,
+      );
 
       expect(pendingColumn).toBeInTheDocument();
       expect(inProgressColumn).toBeInTheDocument();
@@ -68,8 +78,8 @@ describe('TaskListPage', () => {
     });
   });
 
-  describe('empty and loading states', () => {
-    it('should display empty state when task list is empty', async () => {
+  describe("empty and loading states", () => {
+    it("should display empty state when task list is empty", async () => {
       vi.mocked(taskApi.getTasks).mockResolvedValue([]);
 
       renderPage();
@@ -78,9 +88,9 @@ describe('TaskListPage', () => {
       expect(screen.getByText(TEXT.CREATE_FIRST_TASK)).toBeInTheDocument();
     });
 
-    it('should display loading state initially', () => {
+    it("should display loading state initially", () => {
       vi.mocked(taskApi.getTasks).mockImplementation(
-        () => new Promise(() => {})
+        () => new Promise(() => {}),
       );
 
       renderPage();
@@ -89,15 +99,17 @@ describe('TaskListPage', () => {
     });
   });
 
-  describe('error handling', () => {
-    it('should display error message when API fails', async () => {
+  describe("error handling", () => {
+    it("should display error message when API fails", async () => {
       vi.mocked(taskApi.getTasks).mockRejectedValue(
-        new Error('Failed to fetch tasks')
+        new Error("Failed to fetch tasks"),
       );
 
       renderPage();
 
-      expect(await screen.findByText(TEXT.FAILED_TO_LOAD_TASKS)).toBeInTheDocument();
+      expect(
+        await screen.findByText(TEXT.FAILED_TO_LOAD_TASKS),
+      ).toBeInTheDocument();
     });
   });
 });

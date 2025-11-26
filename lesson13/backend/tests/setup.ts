@@ -1,4 +1,4 @@
-import sequelize from "../config/database.js";
+import sequelize from "../src/config/database.js";
 
 beforeAll(async () => {
   await sequelize.sync({ force: true });

@@ -1,5 +1,5 @@
-export type Status = 'pending' | 'in-progress' | 'completed';
-export type Priority = 'low' | 'medium' | 'high';
+export type Status = "pending" | "in-progress" | "completed";
+export type Priority = "low" | "medium" | "high";
 
 export type Task = {
   id: string;
@@ -11,4 +11,4 @@ export type Task = {
   deadline?: string;
 };
 
-export type CreateTaskData = Omit<Task, 'id'>;
+export type CreateTaskData = Omit<Task, "id">;

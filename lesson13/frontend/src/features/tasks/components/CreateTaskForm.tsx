@@ -1,9 +1,9 @@
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { createTask } from '../api';
-import { taskSchema, TaskFormData } from '../schemas/task.schema';
-import './CreateTaskForm.css';
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { createTask } from "../api";
+import { taskSchema, TaskFormData } from "../schemas/task.schema";
+import "./CreateTaskForm.css";
 
 type CreateTaskFormProps = {
   onSuccess: () => void;
@@ -19,10 +19,10 @@ export function CreateTaskForm({ onSuccess }: CreateTaskFormProps) {
     reset,
   } = useForm<TaskFormData>({
     resolver: zodResolver(taskSchema),
-    mode: 'onChange',
+    mode: "onChange",
     defaultValues: {
-      status: 'pending',
-      priority: 'medium',
+      status: "pending",
+      priority: "medium",
     },
   });
 
@@ -38,8 +38,8 @@ export function CreateTaskForm({ onSuccess }: CreateTaskFormProps) {
       reset();
       onSuccess();
     } catch (error) {
-      console.error('Error creating task:', error);
-      setSubmitError('Failed to create task. Please try again.');
+      console.error("Error creating task:", error);
+      setSubmitError("Failed to create task. Please try again.");
     }
   };
 
@@ -59,8 +59,8 @@ export function CreateTaskForm({ onSuccess }: CreateTaskFormProps) {
           <input
             id="title"
             type="text"
-            className={errors.title ? 'error' : ''}
-            {...register('title')}
+            className={errors.title ? "error" : ""}
+            {...register("title")}
             placeholder="Enter task title"
           />
           {errors.title && (
@@ -73,7 +73,7 @@ export function CreateTaskForm({ onSuccess }: CreateTaskFormProps) {
           <textarea
             id="description"
             rows={4}
-            {...register('description')}
+            {...register("description")}
             placeholder="Add task description (optional)"
           />
         </div>
@@ -83,7 +83,7 @@ export function CreateTaskForm({ onSuccess }: CreateTaskFormProps) {
             <label htmlFor="status">
               Status <span className="required">*</span>
             </label>
-            <select id="status" {...register('status')}>
+            <select id="status" {...register("status")}>
               <option value="pending">Pending</option>
               <option value="in-progress">In Progress</option>
               <option value="completed">Completed</option>
@@ -94,7 +94,7 @@ export function CreateTaskForm({ onSuccess }: CreateTaskFormProps) {
             <label htmlFor="priority">
               Priority <span className="required">*</span>
             </label>
-            <select id="priority" {...register('priority')}>
+            <select id="priority" {...register("priority")}>
               <option value="low">🟢 Low</option>
               <option value="medium">🟡 Medium</option>
               <option value="high">🔴 High</option>
@@ -107,20 +107,20 @@ export function CreateTaskForm({ onSuccess }: CreateTaskFormProps) {
           <input
             id="deadline"
             type="date"
-            className={errors.deadline ? 'error' : ''}
-            {...register('deadline')}
+            className={errors.deadline ? "error" : ""}
+            {...register("deadline")}
           />
           {errors.deadline && (
             <span className="error-message">{errors.deadline.message}</span>
           )}
         </div>
 
-        <button 
-          type="submit" 
-          className="btn-submit" 
+        <button
+          type="submit"
+          className="btn-submit"
           disabled={!isValid || isSubmitting}
         >
-          {isSubmitting ? 'Creating...' : 'Create Task'}
+          {isSubmitting ? "Creating..." : "Create Task"}
         </button>
       </form>
     </div>

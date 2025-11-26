@@ -15,14 +15,21 @@ const updateTaskSchema = taskSchema.partial();
 const filtersSchema = z.object({
   status: z.enum(TASK_STATUSES).optional(),
   priority: z.enum(TASK_PRIORITIES).optional(),
-  createdAt: z.string().date("Invalid date format. Expected YYYY-MM-DD").optional(),
+  createdAt: z
+    .string()
+    .date("Invalid date format. Expected YYYY-MM-DD")
+    .optional(),
 });
 
 const idParamSchema = z.object({
   id: z.string().regex(/^\d+$/, "Invalid task ID"),
 });
 
-export const validateCreateTask = (req: Request, res: Response, next: NextFunction): void => {
+export const validateCreateTask = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void => {
   const validation = taskSchema.safeParse(req.body);
 
   if (!validation.success) {
@@ -34,7 +41,11 @@ export const validateCreateTask = (req: Request, res: Response, next: NextFuncti
   next();
 };
 
-export const validateUpdateTask = (req: Request, res: Response, next: NextFunction): void => {
+export const validateUpdateTask = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void => {
   const validation = updateTaskSchema.safeParse(req.body);
 
   if (!validation.success) {
@@ -46,7 +57,11 @@ export const validateUpdateTask = (req: Request, res: Response, next: NextFuncti
   next();
 };
 
-export const validateFilters = (req: Request, res: Response, next: NextFunction): void => {
+export const validateFilters = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void => {
   const validation = filtersSchema.safeParse(req.query);
 
   if (!validation.success) {
@@ -57,7 +72,11 @@ export const validateFilters = (req: Request, res: Response, next: NextFunction)
   next();
 };
 
-export const validateIdParam = (req: Request, res: Response, next: NextFunction): void => {
+export const validateIdParam = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void => {
   const validation = idParamSchema.safeParse(req.params);
 
   if (!validation.success) {

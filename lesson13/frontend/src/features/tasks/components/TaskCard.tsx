@@ -1,28 +1,28 @@
-import { useNavigate } from 'react-router-dom';
-import type { Task } from '../types';
-import './TaskCard.css';
+import { useNavigate } from "react-router-dom";
+import type { Task } from "../types";
+import "./TaskCard.css";
 
 type TaskCardProps = {
   task: Task;
 };
 
 const PRIORITY_TEXT = {
-  low: '🟢 Low',
-  medium: '🟡 Medium',
-  high: '🔴 High',
+  low: "🟢 Low",
+  medium: "🟡 Medium",
+  high: "🔴 High",
 };
 
 const PRIORITY_CLASS = {
-  low: 'priority-low',
-  medium: 'priority-medium',
-  high: 'priority-high',
+  low: "priority-low",
+  medium: "priority-medium",
+  high: "priority-high",
 };
 
 function formatDate(dateString: string): string {
   const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
-    day: 'numeric',
-    month: 'short',
+  return date.toLocaleDateString("en-US", {
+    day: "numeric",
+    month: "short",
   });
 }
 
@@ -34,8 +34,8 @@ export function TaskCard({ task }: TaskCardProps) {
   };
 
   return (
-    <div 
-      className="task-card" 
+    <div
+      className="task-card"
       onClick={handleClick}
       data-priority={task.priority}
     >

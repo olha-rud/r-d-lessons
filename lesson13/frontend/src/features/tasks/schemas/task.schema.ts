@@ -1,13 +1,13 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export const taskSchema = z.object({
   title: z
     .string()
-    .min(1, 'Title is required')
-    .max(100, 'Title must be less than 100 characters'),
+    .min(1, "Title is required")
+    .max(100, "Title must be less than 100 characters"),
   description: z.string().optional(),
-  status: z.enum(['pending', 'in-progress', 'completed']),
-  priority: z.enum(['low', 'medium', 'high']),
+  status: z.enum(["pending", "in-progress", "completed"]),
+  priority: z.enum(["low", "medium", "high"]),
   deadline: z
     .string()
     .optional()
@@ -19,7 +19,7 @@ export const taskSchema = z.object({
         today.setHours(0, 0, 0, 0);
         return selectedDate >= today;
       },
-      { message: 'Deadline cannot be in the past' }
+      { message: "Deadline cannot be in the past" },
     ),
 });
 
