@@ -1,6 +1,7 @@
-import type { CreateTaskData, Task } from "./types";
+import type { CreateTaskData, Task, User } from "./types";
 
 const API_URL = "http://localhost:3000/tasks";
+const USERS_API_URL = "http://localhost:3000/users";
 
 export async function getTasks(): Promise<Task[]> {
   const response = await fetch(API_URL);
@@ -61,4 +62,12 @@ export async function deleteTask(id: string): Promise<void> {
   if (!response.ok) {
     throw new Error("Failed to delete task");
   }
+}
+
+export async function getUsers(): Promise<User[]> {
+  const response = await fetch(USERS_API_URL);
+  if (!response.ok) {
+    throw new Error("Failed to fetch users");
+  }
+  return response.json();
 }

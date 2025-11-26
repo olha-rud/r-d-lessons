@@ -1,6 +1,6 @@
 # Task Tracker - Monorepo
 
-Повноцінний трекер для задач з React frontend та Node.js + PostgreSQL backend.
+Трекер для задач з React frontend та Node.js + PostgreSQL backend.
 
 ## 📁 Структура проєкту
 
@@ -133,11 +133,3 @@ npm run clean && npm run install:all
 ### Frontend
 - Порт: `5173` (змінити у `frontend/vite.config.ts`)
 - API URL: налаштування у `frontend/src/features/tasks/api.ts`
-
-## 📚 Наступні кроки
-
-1. ✅ Доповнити тести для всіх ендпоінтів backend
-2. ✅ Додати тести для всіх компонентів frontend
-3. ⏳ Налаштувати ESLint config для backend
-4. ⏳ Налаштувати Husky + lint-staged для обох проєктів
-5. ⏳ Перевірити production build процес

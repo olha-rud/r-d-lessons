@@ -21,6 +21,7 @@ export const taskSchema = z.object({
       },
       { message: "Deadline cannot be in the past" },
     ),
+  assigneeId: z.number().nullable().optional(),
 });
 
 export type TaskFormData = z.infer<typeof taskSchema>;

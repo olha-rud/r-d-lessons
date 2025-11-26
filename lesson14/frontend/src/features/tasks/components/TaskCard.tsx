@@ -67,6 +67,11 @@ export function TaskCard({ task }: TaskCardProps) {
         {task.deadline && (
           <span className="task-date">📅 {formatDate(task.deadline)}</span>
         )}
+        {task.assignee && (
+          <span className="task-assignee">
+            👤 {task.assignee.firstName} {task.assignee.lastName}
+          </span>
+        )}
       </div>
     </div>
   );

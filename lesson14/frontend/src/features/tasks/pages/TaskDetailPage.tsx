@@ -142,6 +142,14 @@ export function TaskDetailPage() {
                 </span>
               </div>
             )}
+            <div className="detail-item">
+              <span className="detail-label">Assignee:</span>
+              <span className="detail-value">
+                {task.assignee
+                  ? `👤 ${task.assignee.firstName} ${task.assignee.lastName}`
+                  : "Not assigned"}
+              </span>
+            </div>
           </div>
         </div>
 

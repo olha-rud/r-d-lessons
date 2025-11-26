@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createTask } from "../api";
+import { createTask, getUsers } from "../api";
 import { taskSchema, TaskFormData } from "../schemas/task.schema";
+import type { User } from "../types";
+import { useUser } from "../../../contexts/useUser";
 import "./CreateTaskForm.css";
 
 type CreateTaskFormProps = {
@@ -11,20 +13,37 @@ type CreateTaskFormProps = {
 
 export function CreateTaskForm({ onSuccess }: CreateTaskFormProps) {
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [users, setUsers] = useState<User[]>([]);
+  const { currentUser } = useUser();
+
+  useEffect(() => {
+    getUsers()
+      .then(setUsers)
+      .catch((err) => console.error("Failed to load users:", err));
+  }, []);
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting, isValid },
     reset,
+    setValue,
   } = useForm<TaskFormData>({
     resolver: zodResolver(taskSchema),
     mode: "onChange",
     defaultValues: {
       status: "pending",
       priority: "medium",
+      assigneeId: null,
     },
   });
+
+  // Set current user as default assignee when users are loaded
+  useEffect(() => {
+    if (currentUser && users.length > 0) {
+      setValue("assigneeId", currentUser.id);
+    }
+  }, [currentUser, users.length, setValue]);
 
   const onSubmit = async (data: TaskFormData) => {
     try {
@@ -102,17 +121,36 @@ export function CreateTaskForm({ onSuccess }: CreateTaskFormProps) {
           </div>
         </div>
 
-        <div className="form-group">
-          <label htmlFor="deadline">Deadline</label>
-          <input
-            id="deadline"
-            type="date"
-            className={errors.deadline ? "error" : ""}
-            {...register("deadline")}
-          />
-          {errors.deadline && (
-            <span className="error-message">{errors.deadline.message}</span>
-          )}
+        <div className="form-row">
+          <div className="form-group">
+            <label htmlFor="deadline">Deadline</label>
+            <input
+              id="deadline"
+              type="date"
+              className={errors.deadline ? "error" : ""}
+              {...register("deadline")}
+            />
+            {errors.deadline && (
+              <span className="error-message">{errors.deadline.message}</span>
+            )}
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="assigneeId">Assignee</label>
+            <select
+              id="assigneeId"
+              {...register("assigneeId", {
+                setValueAs: (v) => (v === "" ? null : Number(v)),
+              })}
+            >
+              <option value="">Not assigned</option>
+              {users.map((user) => (
+                <option key={user.id} value={user.id}>
+                  {user.firstName} {user.lastName}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         <button

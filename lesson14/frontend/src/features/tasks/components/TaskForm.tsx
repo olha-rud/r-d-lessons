@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createTask, updateTask } from "../api";
+import { createTask, updateTask, getUsers } from "../api";
 import { taskSchema, TaskFormData } from "../schemas/task.schema";
-import type { Task } from "../types";
+import type { Task, User } from "../types";
+import { useUser } from "../../../contexts/useUser";
 import "./TaskForm.css";
 
 type TaskFormProps = {
@@ -14,13 +15,22 @@ type TaskFormProps = {
 
 export function TaskForm({ onSuccess, task, mode = "create" }: TaskFormProps) {
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [users, setUsers] = useState<User[]>([]);
+  const { currentUser } = useUser();
   const isEditMode = mode === "edit" && task;
+
+  useEffect(() => {
+    getUsers()
+      .then(setUsers)
+      .catch((err) => console.error("Failed to load users:", err));
+  }, []);
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting, isValid, isDirty },
     reset,
+    setValue,
   } = useForm<TaskFormData>({
     resolver: zodResolver(taskSchema),
     mode: "onChange",
@@ -31,6 +41,7 @@ export function TaskForm({ onSuccess, task, mode = "create" }: TaskFormProps) {
           status: task.status,
           priority: task.priority,
           deadline: task.deadline ? task.deadline.split("T")[0] : "",
+          assigneeId: task.assigneeId ?? null,
         }
       : {
           title: "",
@@ -38,6 +49,7 @@ export function TaskForm({ onSuccess, task, mode = "create" }: TaskFormProps) {
           status: "pending",
           priority: "medium",
           deadline: "",
+          assigneeId: null,
         },
   });
 
@@ -49,9 +61,13 @@ export function TaskForm({ onSuccess, task, mode = "create" }: TaskFormProps) {
         status: task.status,
         priority: task.priority,
         deadline: task.deadline ? task.deadline.split("T")[0] : "",
+        assigneeId: task.assigneeId ?? null,
       });
+    } else if (currentUser && users.length > 0) {
+      // Set current user as default assignee in create mode
+      setValue("assigneeId", currentUser.id);
     }
-  }, [task, isEditMode, reset]);
+  }, [task, isEditMode, currentUser, reset, setValue, users.length]);
 
   const onSubmit = async (data: TaskFormData) => {
     try {
@@ -144,17 +160,36 @@ export function TaskForm({ onSuccess, task, mode = "create" }: TaskFormProps) {
           </div>
         </div>
 
-        <div className="form-group">
-          <label htmlFor="deadline">Deadline</label>
-          <input
-            id="deadline"
-            type="date"
-            className={errors.deadline ? "error" : ""}
-            {...register("deadline")}
-          />
-          {errors.deadline && (
-            <span className="error-message">{errors.deadline.message}</span>
-          )}
+        <div className="form-row">
+          <div className="form-group">
+            <label htmlFor="deadline">Deadline</label>
+            <input
+              id="deadline"
+              type="date"
+              className={errors.deadline ? "error" : ""}
+              {...register("deadline")}
+            />
+            {errors.deadline && (
+              <span className="error-message">{errors.deadline.message}</span>
+            )}
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="assigneeId">Assignee</label>
+            <select
+              id="assigneeId"
+              {...register("assigneeId", {
+                setValueAs: (v) => (v === "" ? null : Number(v)),
+              })}
+            >
+              <option value="">Not assigned</option>
+              {users.map((user) => (
+                <option key={user.id} value={user.id}>
+                  {user.firstName} {user.lastName}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         <button

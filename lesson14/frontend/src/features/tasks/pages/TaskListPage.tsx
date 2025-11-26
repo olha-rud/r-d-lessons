@@ -4,6 +4,7 @@ import { getTasks, updateTask } from "../api";
 import { TaskCard } from "../components/TaskCard";
 import { EmptyState } from "../../../shared/components/EmptyState";
 import { ErrorMessage } from "../../../shared/components/ErrorMessage";
+import { useUser } from "../../../contexts/useUser";
 import type { Task, Status } from "../types";
 import "./TaskListPage.css";
 
@@ -16,6 +17,7 @@ const COLUMNS: { status: Status; title: string; icon: string }[] = [
 
 export function TaskListPage() {
   const navigate = useNavigate();
+  const { currentUser, logout } = useUser();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -130,13 +132,32 @@ export function TaskListPage() {
   return (
     <div className="task-list-page">
       <div className="page-header">
-        <h1>My Tasks</h1>
-        <button
-          className="btn-create"
-          onClick={() => navigate("/tasks/create")}
-        >
-          + Create Task
-        </button>
+        <div>
+          <h1>My Tasks</h1>
+          {currentUser && (
+            <p style={{ color: "#64748b", fontSize: "0.875rem" }}>
+              Welcome, {currentUser.firstName}!
+            </p>
+          )}
+        </div>
+        <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+          <button
+            className="btn-create"
+            onClick={() => navigate("/tasks/create")}
+          >
+            + Create Task
+          </button>
+          <button
+            className="btn-create"
+            onClick={() => {
+              logout();
+              navigate("/auth");
+            }}
+            style={{ backgroundColor: "#ef4444" }}
+          >
+            Logout
+          </button>
+        </div>
       </div>
 
       {tasks.length === 0 ? (
