@@ -124,6 +124,7 @@ export function TaskForm({ onSuccess, task, mode = "create" }: TaskFormProps) {
             <select id="status" {...register("status")}>
               <option value="pending">Pending</option>
               <option value="in-progress">In Progress</option>
+              <option value="review">Review</option>
               <option value="completed">Completed</option>
             </select>
           </div>

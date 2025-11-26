@@ -2,9 +2,35 @@
   background: white;
   border-radius: 8px;
   padding: 16px;
+  padding-left: 20px;
   cursor: pointer;
   transition: all 0.2s;
   border: 2px solid transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.task-card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: #88b061;
+  transition: width 0.2s;
+}
+
+.task-card[data-priority="low"]::before {
+  background: #88b061;
+}
+
+.task-card[data-priority="medium"]::before {
+  background: #f59e0b;
+}
+
+.task-card[data-priority="high"]::before {
+  background: #ef4444;
 }
 
 .task-card:hover {

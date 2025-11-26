@@ -29,11 +29,13 @@ describe("TaskListPage", () => {
       expect(await screen.findByText(MOCK_TASKS[0].title)).toBeInTheDocument();
       expect(screen.getByText(MOCK_TASKS[1].title)).toBeInTheDocument();
       expect(screen.getByText(MOCK_TASKS[2].title)).toBeInTheDocument();
+      expect(screen.getByText(MOCK_TASKS[3].title)).toBeInTheDocument();
 
       expect(screen.getByText(MOCK_TASKS[0].description!)).toBeInTheDocument();
       expect(screen.getByText(MOCK_TASKS[1].description!)).toBeInTheDocument();
+      expect(screen.getByText(MOCK_TASKS[2].description!)).toBeInTheDocument();
 
-      expect(screen.getByText(TEXT.HIGH)).toBeInTheDocument();
+      expect(screen.getAllByText(TEXT.HIGH)).toHaveLength(2);
       expect(screen.getByText(TEXT.MEDIUM)).toBeInTheDocument();
     });
 
@@ -44,6 +46,7 @@ describe("TaskListPage", () => {
 
       expect(await screen.findByText(TEXT.PENDING)).toBeInTheDocument();
       expect(screen.getByText(TEXT.IN_PROGRESS)).toBeInTheDocument();
+      expect(screen.getByText(TEXT.REVIEW)).toBeInTheDocument();
       expect(screen.getByText(TEXT.COMPLETED)).toBeInTheDocument();
 
       expect(
@@ -51,6 +54,9 @@ describe("TaskListPage", () => {
       ).toBeInTheDocument();
       expect(
         screen.getByTestId(TEST_IDS.KANBAN_COLUMN_IN_PROGRESS),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByTestId(TEST_IDS.KANBAN_COLUMN_REVIEW),
       ).toBeInTheDocument();
       expect(
         screen.getByTestId(TEST_IDS.KANBAN_COLUMN_COMPLETED),
@@ -68,12 +74,14 @@ describe("TaskListPage", () => {
       const inProgressColumn = screen.getByTestId(
         TEST_IDS.KANBAN_COLUMN_IN_PROGRESS,
       );
+      const reviewColumn = screen.getByTestId(TEST_IDS.KANBAN_COLUMN_REVIEW);
       const completedColumn = screen.getByTestId(
         TEST_IDS.KANBAN_COLUMN_COMPLETED,
       );
 
       expect(pendingColumn).toBeInTheDocument();
       expect(inProgressColumn).toBeInTheDocument();
+      expect(reviewColumn).toBeInTheDocument();
       expect(completedColumn).toBeInTheDocument();
     });
   });

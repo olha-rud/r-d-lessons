@@ -51,6 +51,13 @@ select {
   font-size: 0.875rem;
   font-family: inherit;
   transition: all 0.2s;
+  background: #fff;
+}
+
+input:hover,
+textarea:hover,
+select:hover {
+  border-color: #c0c0c0;
 }
 
 input:focus,
@@ -58,6 +65,7 @@ textarea:focus,
 select:focus {
   outline: none;
   border-color: #88b061;
+  box-shadow: 0 0 0 3px rgba(136, 176, 97, 0.15);
 }
 
 input.error,
@@ -92,6 +100,12 @@ textarea {
 .btn-submit:hover:not(:disabled) {
   background: #6d9049;
   transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(136, 176, 97, 0.3);
+}
+
+.btn-submit:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(136, 176, 97, 0.3);
 }
 
 .btn-submit:disabled {

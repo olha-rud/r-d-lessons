@@ -32,9 +32,17 @@ export const MOCK_TASKS: Task[] = [
   {
     id: "3",
     title: "Test Task 3",
+    description: "Description 3",
+    status: "review",
+    priority: "high",
+    createdAt: "2024-01-03T00:00:00.000Z",
+  },
+  {
+    id: "4",
+    title: "Test Task 4",
     status: "completed",
     priority: "low",
-    createdAt: "2024-01-03T00:00:00.000Z",
+    createdAt: "2024-01-04T00:00:00.000Z",
   },
 ];
 
@@ -48,6 +56,7 @@ export const ROUTES = {
 export const TEST_IDS = {
   KANBAN_COLUMN_PENDING: "kanban-column-pending",
   KANBAN_COLUMN_IN_PROGRESS: "kanban-column-in-progress",
+  KANBAN_COLUMN_REVIEW: "kanban-column-review",
   KANBAN_COLUMN_COMPLETED: "kanban-column-completed",
 } as const;
 
@@ -74,5 +83,6 @@ export const TEXT = {
   MEDIUM: "🟡 Medium",
   PENDING: "Pending",
   IN_PROGRESS: "In Progress",
+  REVIEW: "Review",
   COMPLETED: "Completed",
 } as const;

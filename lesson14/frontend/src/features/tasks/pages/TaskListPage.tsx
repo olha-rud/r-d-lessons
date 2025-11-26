@@ -10,6 +10,7 @@ import "./TaskListPage.css";
 const COLUMNS: { status: Status; title: string; icon: string }[] = [
   { status: "pending", title: "Pending", icon: "📋" },
   { status: "in-progress", title: "In Progress", icon: "⚙️" },
+  { status: "review", title: "Review", icon: "👀" },
   { status: "completed", title: "Completed", icon: "✅" },
 ];
 

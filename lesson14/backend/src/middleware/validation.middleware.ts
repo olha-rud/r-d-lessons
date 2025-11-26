@@ -4,7 +4,7 @@ import { TASK_STATUSES, TASK_PRIORITIES } from "../constants/task.constants.js";
 
 const taskSchema = z.object({
   title: z.string().min(1, "Title is required"),
-  description: z.string().min(1, "Description is required"),
+  description: z.string().optional(),
   status: z.enum(TASK_STATUSES).optional(),
   priority: z.enum(TASK_PRIORITIES).optional(),
   assigneeId: z.number().nullable().optional(),

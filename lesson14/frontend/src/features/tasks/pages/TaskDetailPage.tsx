@@ -15,6 +15,7 @@ const PRIORITY_TEXT = {
 const STATUS_TEXT = {
   pending: "Pending",
   "in-progress": "In Progress",
+  review: "Review",
   completed: "Completed",
 };
 

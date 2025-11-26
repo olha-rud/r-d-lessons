@@ -4,7 +4,7 @@ export type { TaskStatus, TaskPriority };
 
 export interface CreateTaskDto {
   title: string;
-  description: string;
+  description?: string;
   status?: TaskStatus;
   priority?: TaskPriority;
   assigneeId?: number | null;

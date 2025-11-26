@@ -448,6 +448,38 @@ describe("TaskForm", () => {
         });
       });
 
+      it("should allow changing task status to review", async () => {
+        const user = userEvent.setup();
+        vi.mocked(taskApi.updateTask).mockResolvedValue({
+          ...mockTask,
+          status: "review",
+        });
+
+        render(<TaskForm onSuccess={mockOnSuccess} task={mockTask} mode="edit" />);
+
+        const statusSelect = screen.getByLabelText(/status/i);
+        const submitButton = screen.getByRole("button", {
+          name: TEXT.SAVE_CHANGES,
+        });
+
+        await user.selectOptions(statusSelect, "review");
+
+        await waitFor(() => {
+          expect(submitButton).toBeEnabled();
+        });
+
+        await user.click(submitButton);
+
+        await waitFor(() => {
+          expect(taskApi.updateTask).toHaveBeenCalledWith(
+            mockTask.id,
+            expect.objectContaining({
+              status: "review",
+            }),
+          );
+        });
+      });
+
       it("should allow changing task priority", async () => {
         const user = userEvent.setup();
         vi.mocked(taskApi.updateTask).mockResolvedValue({

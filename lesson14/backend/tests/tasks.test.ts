@@ -65,14 +65,15 @@ describe("Tasks API Integration Tests", () => {
         await Task.bulkCreate([
           { title: "Task 1", description: "Desc 1", status: "pending" },
           { title: "Task 2", description: "Desc 2", status: "in-progress" },
-          { title: "Task 3", description: "Desc 3", status: "completed" },
+          { title: "Task 3", description: "Desc 3", status: "review" },
+          { title: "Task 4", description: "Desc 4", status: "completed" },
         ]);
 
-        const response = await request(app).get("/tasks?status=pending");
+        const response = await request(app).get("/tasks?status=review");
 
         expect(response.status).toBe(200);
         expect(response.body).toHaveLength(1);
-        expect(response.body[0].status).toBe("pending");
+        expect(response.body[0].status).toBe("review");
       });
 
       it("should filter tasks by priority", async () => {
@@ -190,6 +191,17 @@ describe("Tasks API Integration Tests", () => {
 
         expect(response.status).toBe(201);
         expect(response.body.status).toBe("in-progress");
+      });
+
+      it("should create a task with review status", async () => {
+        const response = await request(app).post("/tasks").send({
+          title: "Task for review",
+          description: "Description",
+          status: "review",
+        });
+
+        expect(response.status).toBe(201);
+        expect(response.body.status).toBe("review");
       });
 
       it("should create a task with custom priority", async () => {
@@ -491,6 +503,21 @@ describe("Tasks API Integration Tests", () => {
 
         expect(response.status).toBe(200);
         expect(response.body.status).toBe("completed");
+      });
+
+      it("should update task status to review", async () => {
+        const task = await Task.create({
+          title: "Title",
+          description: "Description",
+          status: "in-progress",
+        });
+
+        const response = await request(app)
+          .put(`/tasks/${task.id}`)
+          .send({ status: "review" });
+
+        expect(response.status).toBe(200);
+        expect(response.body.status).toBe("review");
       });
 
       it("should update task priority", async () => {

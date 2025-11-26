@@ -38,8 +38,8 @@
 /* Kanban Board Styles */
 .kanban-board {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
   align-items: start;
 }
 
@@ -133,7 +133,7 @@
   font-size: 1.125rem;
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 1400px) {
   .kanban-board {
     grid-template-columns: repeat(2, 1fr);
   }
