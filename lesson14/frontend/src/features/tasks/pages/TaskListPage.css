@@ -88,6 +88,13 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+  min-height: 100px;
+  transition: background-color 0.2s ease;
+}
+
+.column-content.dragging-over {
+  background: rgba(136, 176, 97, 0.1);
+  border-radius: 8px;
 }
 
 .column-empty {
@@ -95,6 +102,23 @@
   color: #999;
   font-size: 0.875rem;
   padding: 40px 20px;
+}
+
+/* Drag and Drop Styles */
+.task-wrapper {
+  cursor: grab;
+}
+
+.task-wrapper:active {
+  cursor: grabbing;
+}
+
+.task-wrapper.dragging {
+  opacity: 0.5;
+}
+
+.task-wrapper.dragging .task-card {
+  transform: rotate(2deg);
 }
 
 /* Task Card Overrides for Kanban */

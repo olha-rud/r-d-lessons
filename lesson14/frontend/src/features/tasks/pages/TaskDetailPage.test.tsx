@@ -94,7 +94,9 @@ describe("TaskDetailPage", () => {
       });
       await user.click(deleteButton);
 
-      expect(screen.getByText("Delete Task")).toBeInTheDocument();
+      expect(
+        screen.getByRole("heading", { name: "Delete Task", level: 2 }),
+      ).toBeInTheDocument();
       expect(
         screen.getByText(/Are you sure you want to delete this task/),
       ).toBeInTheDocument();
@@ -122,13 +124,17 @@ describe("TaskDetailPage", () => {
       });
       await user.click(deleteButton);
 
-      expect(screen.getByText("Delete Task")).toBeInTheDocument();
+      expect(
+        screen.getByRole("heading", { name: "Delete Task", level: 2 }),
+      ).toBeInTheDocument();
 
       const cancelButton = screen.getByRole("button", { name: "Cancel" });
       await user.click(cancelButton);
 
       expect(taskApi.deleteTask).not.toHaveBeenCalled();
-      expect(screen.queryByText("Delete Task")).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole("heading", { name: "Delete Task", level: 2 }),
+      ).not.toBeInTheDocument();
     });
   });
 });

@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import type { Task } from "../types";
 import "./TaskCard.css";
@@ -28,14 +29,29 @@ function formatDate(dateString: string): string {
 
 export function TaskCard({ task }: TaskCardProps) {
   const navigate = useNavigate();
+  const mouseDownPos = useRef<{ x: number; y: number } | null>(null);
 
-  const handleClick = () => {
+  const handleMouseDown = (e: React.MouseEvent) => {
+    mouseDownPos.current = { x: e.clientX, y: e.clientY };
+  };
+
+  const handleClick = (e: React.MouseEvent) => {
+    // Only navigate if mouse didn't move much (not a drag)
+    if (mouseDownPos.current) {
+      const dx = Math.abs(e.clientX - mouseDownPos.current.x);
+      const dy = Math.abs(e.clientY - mouseDownPos.current.y);
+      if (dx > 5 || dy > 5) {
+        // It was a drag, don't navigate
+        return;
+      }
+    }
     navigate(`/tasks/${task.id}`);
   };
 
   return (
     <div
       className="task-card"
+      onMouseDown={handleMouseDown}
       onClick={handleClick}
       data-priority={task.priority}
     >

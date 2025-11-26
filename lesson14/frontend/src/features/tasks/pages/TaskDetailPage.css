@@ -138,6 +138,24 @@
   gap: 12px;
 }
 
+.btn-edit {
+  padding: 12px 24px;
+  background: #88b061;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-edit:hover {
+  background: #6d9049;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(136, 176, 97, 0.3);
+}
+
 .btn-delete {
   padding: 12px 24px;
   background: #ef4444;

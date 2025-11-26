@@ -1,1 +1,1 @@
-cd "$(git rev-parse --show-toplevel)/lesson13" && npx lint-staged
+cd "$(git rev-parse --show-toplevel)/lesson14" && npx lint-staged

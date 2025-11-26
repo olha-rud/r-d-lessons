@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, DragEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import { getTasks } from "../api";
+import { getTasks, updateTask } from "../api";
 import { TaskCard } from "../components/TaskCard";
 import { EmptyState } from "../../../shared/components/EmptyState";
 import { ErrorMessage } from "../../../shared/components/ErrorMessage";
@@ -18,6 +18,8 @@ export function TaskListPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [draggedTaskId, setDraggedTaskId] = useState<string | null>(null);
+  const [dragOverColumn, setDragOverColumn] = useState<Status | null>(null);
 
   useEffect(() => {
     loadTasks();
@@ -39,6 +41,65 @@ export function TaskListPage() {
 
   const getTasksByStatus = (status: Status): Task[] => {
     return tasks.filter((task) => task.status === status);
+  };
+
+  const handleDragStart = (e: DragEvent<HTMLDivElement>, taskId: string | number) => {
+    const id = String(taskId);
+    setDraggedTaskId(id);
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("text/plain", id);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedTaskId(null);
+    setDragOverColumn(null);
+  };
+
+  const handleDragOver = (e: DragEvent<HTMLDivElement>, status: Status) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    setDragOverColumn(status);
+  };
+
+  const handleDragLeave = (e: DragEvent<HTMLDivElement>) => {
+    // Only reset if we're actually leaving the column (not entering a child)
+    const relatedTarget = e.relatedTarget as HTMLElement | null;
+    const currentTarget = e.currentTarget;
+    if (!relatedTarget || !currentTarget.contains(relatedTarget)) {
+      setDragOverColumn(null);
+    }
+  };
+
+  const handleDrop = async (e: DragEvent<HTMLDivElement>, newStatus: Status) => {
+    e.preventDefault();
+    setDragOverColumn(null);
+    setDraggedTaskId(null);
+
+    const taskId = e.dataTransfer.getData("text/plain");
+    const task = tasks.find((t) => String(t.id) === taskId);
+
+    if (!task || task.status === newStatus) {
+      return;
+    }
+
+    // Optimistic update
+    const previousStatus = task.status;
+    setTasks((prevTasks) =>
+      prevTasks.map((t) => (String(t.id) === taskId ? { ...t, status: newStatus } : t)),
+    );
+
+    try {
+      await updateTask(taskId, { status: newStatus });
+    } catch (err) {
+      console.error("Error updating task status:", err);
+      // Rollback on error
+      setTasks((prevTasks) =>
+        prevTasks.map((t) =>
+          String(t.id) === taskId ? { ...t, status: previousStatus } : t,
+        ),
+      );
+      setError("Failed to update task status. Please try again.");
+    }
   };
 
   if (isLoading) {
@@ -89,12 +150,26 @@ export function TaskListPage() {
                   <h2 className="column-title">{column.title}</h2>
                   <span className="column-count">{columnTasks.length}</span>
                 </div>
-                <div className="column-content">
+                <div
+                  className={`column-content ${dragOverColumn === column.status ? "dragging-over" : ""}`}
+                  onDragOver={(e) => handleDragOver(e, column.status)}
+                  onDragLeave={handleDragLeave}
+                  onDrop={(e) => handleDrop(e, column.status)}
+                >
                   {columnTasks.length === 0 ? (
-                    <div className="column-empty">No tasks</div>
+                    <div className="column-empty drop-zone">Drop here</div>
                   ) : (
                     columnTasks.map((task) => (
-                      <TaskCard key={task.id} task={task} />
+                      <div
+                        key={task.id}
+                        draggable
+                        onDragStart={(e) => handleDragStart(e, task.id)}
+                        onDragEnd={handleDragEnd}
+                        onDragOver={(e) => e.preventDefault()}
+                        className={`task-wrapper ${draggedTaskId === String(task.id) ? "dragging" : ""}`}
+                      >
+                        <TaskCard task={task} />
+                      </div>
                     ))
                   )}
                 </div>

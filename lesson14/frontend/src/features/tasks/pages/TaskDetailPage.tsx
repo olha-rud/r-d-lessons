@@ -151,8 +151,14 @@ export function TaskDetailPage() {
         )}
 
         <div className="task-actions">
+          <button
+            className="btn-edit"
+            onClick={() => navigate(`/tasks/${task.id}/edit`)}
+          >
+            Edit Task
+          </button>
           <button className="btn-delete" onClick={handleDeleteClick}>
-            🗑️ Delete Task
+            Delete Task
           </button>
         </div>
       </div>

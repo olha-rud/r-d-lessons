@@ -2,6 +2,7 @@ import { createBrowserRouter, Navigate } from "react-router-dom";
 import { TaskListPage } from "./features/tasks/pages/TaskListPage";
 import { TaskDetailPage } from "./features/tasks/pages/TaskDetailPage";
 import { CreateTaskPage } from "./features/tasks/pages/CreateTaskPage";
+import { EditTaskPage } from "./features/tasks/pages/EditTaskPage";
 
 export const router = createBrowserRouter([
   {
@@ -19,5 +20,9 @@ export const router = createBrowserRouter([
   {
     path: "/tasks/:id",
     element: <TaskDetailPage />,
+  },
+  {
+    path: "/tasks/:id/edit",
+    element: <EditTaskPage />,
   },
 ]);
