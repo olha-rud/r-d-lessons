@@ -21,7 +21,7 @@ interface TaskAttributes {
 
 type TaskCreationAttributes = Optional<
   TaskAttributes,
-  "id" | "status" | "priority" | "assigneeId"
+  "id" | "description" | "status" | "priority" | "assigneeId"
 >;
 
 class Task
@@ -54,7 +54,8 @@ Task.init(
     },
     description: {
       type: DataTypes.TEXT,
-      allowNull: false,
+      allowNull: true,
+      defaultValue: "",
     },
     status: {
       type: DataTypes.ENUM(...TASK_STATUSES),
