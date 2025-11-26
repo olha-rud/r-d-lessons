@@ -44,7 +44,10 @@ export function TaskListPage() {
     return tasks.filter((task) => task.status === status);
   };
 
-  const handleDragStart = (e: DragEvent<HTMLDivElement>, taskId: string | number) => {
+  const handleDragStart = (
+    e: DragEvent<HTMLDivElement>,
+    taskId: string | number,
+  ) => {
     const id = String(taskId);
     setDraggedTaskId(id);
     e.dataTransfer.effectAllowed = "move";
@@ -71,7 +74,10 @@ export function TaskListPage() {
     }
   };
 
-  const handleDrop = async (e: DragEvent<HTMLDivElement>, newStatus: Status) => {
+  const handleDrop = async (
+    e: DragEvent<HTMLDivElement>,
+    newStatus: Status,
+  ) => {
     e.preventDefault();
     setDragOverColumn(null);
     setDraggedTaskId(null);
@@ -86,7 +92,9 @@ export function TaskListPage() {
     // Optimistic update
     const previousStatus = task.status;
     setTasks((prevTasks) =>
-      prevTasks.map((t) => (String(t.id) === taskId ? { ...t, status: newStatus } : t)),
+      prevTasks.map((t) =>
+        String(t.id) === taskId ? { ...t, status: newStatus } : t,
+      ),
     );
 
     try {

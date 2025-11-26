@@ -81,7 +81,9 @@ describe("TaskForm", () => {
         await user.type(titleInput, "a");
         await user.clear(titleInput);
 
-        expect(await screen.findByText(TEXT.TITLE_REQUIRED)).toBeInTheDocument();
+        expect(
+          await screen.findByText(TEXT.TITLE_REQUIRED),
+        ).toBeInTheDocument();
         expect(submitButton).toBeDisabled();
       });
 
@@ -94,7 +96,9 @@ describe("TaskForm", () => {
 
         await user.type(titleInput, longTitle);
 
-        expect(await screen.findByText(TEXT.TITLE_TOO_LONG)).toBeInTheDocument();
+        expect(
+          await screen.findByText(TEXT.TITLE_TOO_LONG),
+        ).toBeInTheDocument();
       });
 
       it("should accept title with exactly 100 characters", async () => {
@@ -234,13 +238,17 @@ describe("TaskForm", () => {
 
     describe("initial state", () => {
       it("should render with 'Edit Task' heading", () => {
-        render(<TaskForm onSuccess={mockOnSuccess} task={mockTask} mode="edit" />);
+        render(
+          <TaskForm onSuccess={mockOnSuccess} task={mockTask} mode="edit" />,
+        );
 
         expect(screen.getByText(TEXT.EDIT_TASK)).toBeInTheDocument();
       });
 
       it("should have submit button with 'Save Changes' text", () => {
-        render(<TaskForm onSuccess={mockOnSuccess} task={mockTask} mode="edit" />);
+        render(
+          <TaskForm onSuccess={mockOnSuccess} task={mockTask} mode="edit" />,
+        );
 
         expect(
           screen.getByRole("button", { name: TEXT.SAVE_CHANGES }),
@@ -248,7 +256,9 @@ describe("TaskForm", () => {
       });
 
       it("should populate form with task data", () => {
-        render(<TaskForm onSuccess={mockOnSuccess} task={mockTask} mode="edit" />);
+        render(
+          <TaskForm onSuccess={mockOnSuccess} task={mockTask} mode="edit" />,
+        );
 
         const titleInput = screen.getByLabelText(/title/i);
         const descriptionInput = screen.getByLabelText(/description/i);
@@ -262,7 +272,9 @@ describe("TaskForm", () => {
       });
 
       it("should have submit button disabled when form has not changed", () => {
-        render(<TaskForm onSuccess={mockOnSuccess} task={mockTask} mode="edit" />);
+        render(
+          <TaskForm onSuccess={mockOnSuccess} task={mockTask} mode="edit" />,
+        );
 
         const submitButton = screen.getByRole("button", {
           name: TEXT.SAVE_CHANGES,
@@ -274,7 +286,9 @@ describe("TaskForm", () => {
     describe("validation", () => {
       it("should enable submit button when form is changed and valid", async () => {
         const user = userEvent.setup();
-        render(<TaskForm onSuccess={mockOnSuccess} task={mockTask} mode="edit" />);
+        render(
+          <TaskForm onSuccess={mockOnSuccess} task={mockTask} mode="edit" />,
+        );
 
         const titleInput = screen.getByLabelText(/title/i);
         const submitButton = screen.getByRole("button", {
@@ -293,7 +307,9 @@ describe("TaskForm", () => {
 
       it("should disable submit button when form is invalid", async () => {
         const user = userEvent.setup();
-        render(<TaskForm onSuccess={mockOnSuccess} task={mockTask} mode="edit" />);
+        render(
+          <TaskForm onSuccess={mockOnSuccess} task={mockTask} mode="edit" />,
+        );
 
         const titleInput = screen.getByLabelText(/title/i);
         const submitButton = screen.getByRole("button", {
@@ -305,12 +321,16 @@ describe("TaskForm", () => {
         await waitFor(() => {
           expect(submitButton).toBeDisabled();
         });
-        expect(await screen.findByText(TEXT.TITLE_REQUIRED)).toBeInTheDocument();
+        expect(
+          await screen.findByText(TEXT.TITLE_REQUIRED),
+        ).toBeInTheDocument();
       });
 
       it("should show validation error for title exceeding 100 characters", async () => {
         const user = userEvent.setup();
-        render(<TaskForm onSuccess={mockOnSuccess} task={mockTask} mode="edit" />);
+        render(
+          <TaskForm onSuccess={mockOnSuccess} task={mockTask} mode="edit" />,
+        );
 
         const titleInput = screen.getByLabelText(/title/i);
         const longTitle = "a".repeat(101);
@@ -318,7 +338,9 @@ describe("TaskForm", () => {
         await user.clear(titleInput);
         await user.type(titleInput, longTitle);
 
-        expect(await screen.findByText(TEXT.TITLE_TOO_LONG)).toBeInTheDocument();
+        expect(
+          await screen.findByText(TEXT.TITLE_TOO_LONG),
+        ).toBeInTheDocument();
       });
     });
 
@@ -330,7 +352,9 @@ describe("TaskForm", () => {
           title: "Updated Task",
         });
 
-        render(<TaskForm onSuccess={mockOnSuccess} task={mockTask} mode="edit" />);
+        render(
+          <TaskForm onSuccess={mockOnSuccess} task={mockTask} mode="edit" />,
+        );
 
         const titleInput = screen.getByLabelText(/title/i);
         const submitButton = screen.getByRole("button", {
@@ -364,7 +388,9 @@ describe("TaskForm", () => {
           title: "Updated Task",
         });
 
-        render(<TaskForm onSuccess={mockOnSuccess} task={mockTask} mode="edit" />);
+        render(
+          <TaskForm onSuccess={mockOnSuccess} task={mockTask} mode="edit" />,
+        );
 
         const titleInput = screen.getByLabelText(/title/i);
         const submitButton = screen.getByRole("button", {
@@ -392,7 +418,9 @@ describe("TaskForm", () => {
         const user = userEvent.setup();
         vi.mocked(taskApi.updateTask).mockRejectedValue(new Error("API Error"));
 
-        render(<TaskForm onSuccess={mockOnSuccess} task={mockTask} mode="edit" />);
+        render(
+          <TaskForm onSuccess={mockOnSuccess} task={mockTask} mode="edit" />,
+        );
 
         const titleInput = screen.getByLabelText(/title/i);
         const submitButton = screen.getByRole("button", {
@@ -423,7 +451,9 @@ describe("TaskForm", () => {
           status: "completed",
         });
 
-        render(<TaskForm onSuccess={mockOnSuccess} task={mockTask} mode="edit" />);
+        render(
+          <TaskForm onSuccess={mockOnSuccess} task={mockTask} mode="edit" />,
+        );
 
         const statusSelect = screen.getByLabelText(/status/i);
         const submitButton = screen.getByRole("button", {
@@ -455,7 +485,9 @@ describe("TaskForm", () => {
           status: "review",
         });
 
-        render(<TaskForm onSuccess={mockOnSuccess} task={mockTask} mode="edit" />);
+        render(
+          <TaskForm onSuccess={mockOnSuccess} task={mockTask} mode="edit" />,
+        );
 
         const statusSelect = screen.getByLabelText(/status/i);
         const submitButton = screen.getByRole("button", {
@@ -487,7 +519,9 @@ describe("TaskForm", () => {
           priority: "low",
         });
 
-        render(<TaskForm onSuccess={mockOnSuccess} task={mockTask} mode="edit" />);
+        render(
+          <TaskForm onSuccess={mockOnSuccess} task={mockTask} mode="edit" />,
+        );
 
         const prioritySelect = screen.getByLabelText(/priority/i);
         const submitButton = screen.getByRole("button", {

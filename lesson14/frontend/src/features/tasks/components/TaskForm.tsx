@@ -70,7 +70,10 @@ export function TaskForm({ onSuccess, task, mode = "create" }: TaskFormProps) {
 
       onSuccess();
     } catch (error) {
-      console.error(`Error ${isEditMode ? "updating" : "creating"} task:`, error);
+      console.error(
+        `Error ${isEditMode ? "updating" : "creating"} task:`,
+        error,
+      );
       setSubmitError(
         `Failed to ${isEditMode ? "update" : "create"} task. Please try again.`,
       );
@@ -154,7 +157,11 @@ export function TaskForm({ onSuccess, task, mode = "create" }: TaskFormProps) {
           )}
         </div>
 
-        <button type="submit" className="btn-submit" disabled={isSubmitDisabled}>
+        <button
+          type="submit"
+          className="btn-submit"
+          disabled={isSubmitDisabled}
+        >
           {isSubmitting
             ? isEditMode
               ? "Saving..."
